@@ -5,8 +5,10 @@ print(df.to_csv())
 
 def variation(num, den):
     assert len(num) == len(den)
-    var = [0] * len(num)
+    var = [None] * len(num)
     for i in range(len(num)-1):
+        if num[i] == None:
+            continue
         delta_num = num[i+1] - num[i]
         delta_den = den[i+1] - den[i]
         var[i+1] = delta_num / delta_den
@@ -16,7 +18,9 @@ def velocity(positions, time):
     return variation(positions, time)
 
 def acceleration(velocity, time):
-    return variation(velocity, time)
+    accel = variation(velocity, time)
+    accel[0] = accel[1] = None
+    return accel
 
 t = df["t"].to_numpy()
 y = df["y"].to_numpy()

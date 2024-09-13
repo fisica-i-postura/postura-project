@@ -1,16 +1,13 @@
-from sample_pandas_data import df
-import matplotlib.pyplot as plt
-
-print(df.to_csv())
+import numpy as np
 
 def variation(num, den):
     assert len(num) == len(den)
-    var = [None] * len(num)
+    var = np.zeros(len(num))
     for i in range(len(num)-1):
-        if num[i] == None:
-            continue
         delta_num = num[i+1] - num[i]
         delta_den = den[i+1] - den[i]
+        if delta_den == 0:
+            continue
         var[i+1] = delta_num / delta_den
     return var
 
@@ -19,24 +16,5 @@ def velocity(positions, time):
 
 def acceleration(velocity, time):
     accel = variation(velocity, time)
-    accel[0] = accel[1] = None
+    accel[0:1] = 0
     return accel
-
-t = df["t"].to_numpy()
-y = df["y"].to_numpy()
-
-v = velocity(y, t)
-a = acceleration(v, t)
-
-print(t)
-print(y)
-print(v)
-print(a)
-
-plt.plot(t, y)
-plt.plot(t, v)
-plt.plot(t, a)
-plt.show()
-
-def landmark_to_kinematic(landmark_df):
-    """TODO"""

@@ -16,5 +16,5 @@ def velocity(positions, time):
 
 def acceleration(velocity, time):
     accel = variation(velocity, time)
-    accel[0:1] = 0
+    accel[0:2] = 0
     return accel

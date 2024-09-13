@@ -11,7 +11,3 @@ df = pd.DataFrame({
     'x': x,
     'y': y
 })
-
-print(df.to_csv())
-
-print(df["t"])

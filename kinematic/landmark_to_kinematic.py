@@ -1,7 +1,6 @@
-from sample_pandas_data import df
 from kinematic_equations import velocity, acceleration
 import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
 
 def resultant(x, y):
     return np.sqrt(np.square(x) + np.square(y))
@@ -9,31 +8,20 @@ def resultant(x, y):
 def direction(x, y):
     return np.arctan(x, y)
 
-t = df["t"].to_numpy()
-x = df["x"].to_numpy()
-y = df["y"].to_numpy()
+class JointKinematics:
+    def __init__(self, joint_df: pd.DataFrame) -> None:
+        self.t = joint_df['second'].to_numpy()
+        self.x_position = joint_df['x_abs'].to_numpy()      
+        self.y_position = joint_df['y_abs'].to_numpy()
+        self.p = joint_df["v"].to_numpy()
 
-vx = velocity(x, t)
-vy = velocity(y, t)
-v = resultant(vx, vy)
-v_direction = direction(vx, vy)
+        self.x_velocity = velocity(self.t, self.x_position)
+        self.y_velocity = velocity(self.t, self.y_position)
+        self.velocity = resultant(self.x_velocity, self.y_velocity)
 
-ax = acceleration(vx, t)
-ay = acceleration(vy, t)
-a = resultant(ax, ay)
-a_direction = direction(ax, ay)
+        self.x_accel = acceleration(self.t, self.x_velocity)
+        self.y_accel = acceleration(self.t, self.y_velocity)
+        self.accel = resultant(self.x_velocity, self.y_velocity)
 
-print(t)
-print(x)
-print(y)
-print(vx)
-print(vy)
-print(v)
-print(ax)
-print(ay)
-print(a)
-
-plt.plot(t, vx, "red")
-plt.plot(t, vy, "yellow")
-# plt.plot(t, v, "o")
-plt.show()
+    def __str__(self) -> str:
+        return f't = {self.t}'

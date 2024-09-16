@@ -7,3 +7,9 @@ def variation(x: np.ndarray, y: np.ndarray):
     # print(f'Input len: {len(x)} ; Output len: {len(variation)}')
     template[-len(variation):] = variation
     return template
+
+def resultant(x: np.ndarray, y: np.ndarray):
+    return np.sqrt(np.square(x) + np.square(y))
+
+def direction(x: np.ndarray, y: np.ndarray):
+    return np.arctan(x, y)

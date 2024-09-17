@@ -1,4 +1,4 @@
-from kinematic_equiations_utils import variation, resultant
+from kinematic_equations_utils import variation, resultant
 import pandas as pd
 
 class JointKinematics:

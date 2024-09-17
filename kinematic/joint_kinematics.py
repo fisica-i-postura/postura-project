@@ -1,5 +1,6 @@
 from kinematic_equations_utils import variation, resultant
 import pandas as pd
+from dataset_smoothing import smooth
 
 class JointKinematics:
     def __init__(self, joint_df: pd.DataFrame) -> None:
@@ -18,6 +19,18 @@ class JointKinematics:
         self.y_accel = variation(self.t, self.y_velocity)
         self.accel = resultant(self.x_velocity, self.y_velocity)
 
+        self.smooth_curves()
+
     def __str__(self) -> str:
         """like java toString(), but for debugging purposes only"""
         return f'vx = {self.x_velocity} \n ax = {self.x_accel}'
+    
+    def smooth_curves(self):
+        self.x_position_smooth = smooth(self.x_position)
+        self.y_position_smooth = smooth(self.y_position)
+        
+        self.x_velocity_smooth = variation(self.t, self.x_position_smooth)
+        self.y_velocity_smooth = variation(self.t, self.y_position_smooth)
+
+        self.x_accel_smooth = variation(self.t, self.x_velocity_smooth)
+        self.y_accel_smooth = variation(self.t, self.y_velocity_smooth)

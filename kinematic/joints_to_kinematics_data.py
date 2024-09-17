@@ -3,10 +3,8 @@ from joint_kinematics import JointKinematics
 
 class JointsToKinematicsData:
     def __init__(self, df: pd.DataFrame) -> None:
-        self._joint_id_to_kinematics_map = {}
         joints = df.groupby('a')
-        for joint_id, data in joints:
-            self._joint_id_to_kinematics_map[joint_id] = JointKinematics(data)
+        self._joint_id_to_kinematics_map = {joint_id: JointKinematics(data) for joint_id, data in joints}
 
     def get_joint(self, id: int):
         return self._joint_id_to_kinematics_map[id]

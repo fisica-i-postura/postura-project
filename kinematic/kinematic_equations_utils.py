@@ -5,7 +5,7 @@ def resultant(x: np.ndarray, y: np.ndarray):
 
 def direction(x: np.ndarray, y: np.ndarray):
     """Returns the angle in radians"""
-    return np.arctan(x, y)
+    return np.arctan(y, x)
 
 def variation(x: np.ndarray, y: np.ndarray):
     assert x.shape == y.shape

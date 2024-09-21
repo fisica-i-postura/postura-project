@@ -6,8 +6,8 @@ class JointsToKinematicsData:
         joints = df.groupby('a')
         self._joint_id_to_kinematics_map = {joint_id: JointKinematics(data) for joint_id, data in joints}
 
-    def get_joint(self, id: int):
-        return self._joint_id_to_kinematics_map[id]
+    def get_joint(self, joint_id: int):
+        return self._joint_id_to_kinematics_map[joint_id]
     
     def __str__(self) -> str:
         s = 'Joints Data: \n'

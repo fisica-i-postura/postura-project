@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from kinematic.joints_to_kinematics_data import JointsToKinematicsData
+from ..kinematic.joints_to_kinematics_data import JointsToKinematicsData
 
 
 

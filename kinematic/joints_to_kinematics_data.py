@@ -3,6 +3,7 @@ from joint_kinematics import JointKinematics
 
 class JointsToKinematicsData:
     def __init__(self, df: pd.DataFrame) -> None:
+        """Given a dataframe with joints data, models a map of joint_id to JointKinematics"""
         joints = df.groupby('a')
         self._joint_id_to_kinematics_map = {joint_id: JointKinematics(data) for joint_id, data in joints}
 

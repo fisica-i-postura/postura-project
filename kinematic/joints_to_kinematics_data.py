@@ -1,5 +1,5 @@
 import pandas as pd
-from joint_kinematics import JointKinematics
+from .joint_kinematics import JointKinematics
 
 class JointsToKinematicsData:
     def __init__(self, df: pd.DataFrame) -> None:

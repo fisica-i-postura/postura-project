@@ -1,15 +1,14 @@
 import numpy as np
 
-def variation(x: np.ndarray, y: np.ndarray):
-    assert x.shape == y.shape and len(x) == len(y)
-    variation = [(yf - yi) / (xf - xi) for xi, xf, yi, yf in zip(x[:-1], x[1:], y[:-1], y[1:])]
-    template = np.zeros_like(x)
-    # print(f'Input len: {len(x)} ; Output len: {len(variation)}')
-    template[-len(variation):] = variation
-    return template
-
 def resultant(x: np.ndarray, y: np.ndarray):
     return np.sqrt(np.square(x) + np.square(y))
 
 def direction(x: np.ndarray, y: np.ndarray):
     return np.arctan(x, y)
+
+def variation(x: np.ndarray, y: np.ndarray):
+    assert x.shape == y.shape
+    variation_yx = np.diff(y) / np.diff(x)
+    values = np.full_like(x, np.nan)
+    values[1:] = variation_yx
+    return values

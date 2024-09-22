@@ -1,6 +1,6 @@
-from kinematic_equations_utils import variation, resultant
+from kinematic.kinematic_equations_utils import variation, resultant
 import pandas as pd
-from dataset_smoothing import smooth
+from kinematic.dataset_smoothing import smooth
 from variables.constants import SECOND, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, VISIBILITY
 
 class JointKinematics:

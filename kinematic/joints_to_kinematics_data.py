@@ -1,5 +1,5 @@
 import pandas as pd
-from joint_kinematics import JointKinematics
+from kinematic.joint_kinematics import JointKinematics
 from variables.constants import JOINT_ID
 
 class JointsToKinematicsData:

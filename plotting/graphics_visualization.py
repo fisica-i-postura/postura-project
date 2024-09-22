@@ -3,8 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.collections import LineCollection
-from joints_to_kinematics_data import JointsToKinematicsData
-
+from kinematic.joints_to_kinematics_data import JointsToKinematicsData
 
 # Mapa de nombres de articulaciones
 joint_names = {

@@ -39,8 +39,8 @@ def video_to_csv(path: str,csv: str):
         results = pose.process(frame_rgb)
 
         if results.pose_landmarks:
-            for joint_id in joints_to_track.items():
-                joint = results.pose_landmarks.landmark[joint_id[0]]
+            for joint_id in joints_to_track.keys():
+                joint = results.pose_landmarks.landmark[joint_id]
                 
                 # Guardar los datos de las articulaciones con posiciones normalizadas
                 data.append({
@@ -77,4 +77,4 @@ def video_to_csv(path: str,csv: str):
 
     print("Archivo 'joints_per_second.csv' generado correctamente.")
 
-video_to_csv("../postura-project/video/Bien_Caminata_Con_Peso.mp4","joints_per_second.csv")
+# video_to_csv("../postura-project/video/Bien_Caminata_Con_Peso.mp4","joints_per_second.csv")

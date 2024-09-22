@@ -4,7 +4,7 @@ import pandas as pd
 from variables.joints_ids_to_names import joints_to_track
 from variables.constants import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALIZED, Y_POSITION_NORMALIZED, VISIBILITY, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND
 
-def video_to_csv(path: str,csv: str):
+def video_to_csv(path: str, csv: str):
     cap = cv2.VideoCapture(path)
     mp_pose = mp.solutions.pose
 
@@ -59,22 +59,12 @@ def video_to_csv(path: str,csv: str):
     df = pd.DataFrame(data)
 
     # Multiplicar los valores de 'x' por el ancho y los de 'y' por el alto para desnormalizar
-    df[X_POSITION_ABSOLUTE] = df[X_POSITION_NORMALIZED] * resolution[0]
-    df[Y_POSITION_ABSOLUTE] = df[Y_POSITION_NORMALIZED] * resolution[1]
+    df[X_POSITION_ABSOLUTE] = df[X_POSITION_NORMALIZED] * resolution[0] / 1000
+    df[Y_POSITION_ABSOLUTE] = df[Y_POSITION_NORMALIZED] * resolution[1] / 1000
 
     # Crear una nueva columna que indica el segundo en que se encuentra cada frame
-    df[SECOND] = df[FRAME_INDEX] // fps
+    df[SECOND] = df[FRAME_INDEX] / fps
 
-    # Agrupar por cada segundo y calcular la media de las posiciones x e y para cada articulación
-    grouped_df = df.groupby(['second', JOINT_ID]).agg({
-        X_POSITION_ABSOLUTE: 'mean',
-        Y_POSITION_ABSOLUTE: 'mean',
-        VISIBILITY: 'mean'  # También se puede calcular la visibilidad media
-    }).reset_index()
+    df.to_csv(csv, index=False)
 
-    # Guardar el resultado en un nuevo archivo CSV
-    grouped_df.to_csv(csv, index=False)
-
-    print("Archivo 'joints_per_second.csv' generado correctamente.")
-
-# video_to_csv("../postura-project/video/Bien_Caminata_Con_Peso.mp4","joints_per_second.csv")
+    print(f"Archivo '{csv}' generado correctamente.")

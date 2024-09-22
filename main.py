@@ -1,5 +1,5 @@
 import os
-from tracking.tracker_articulations import video_to_csv
+from tracking.track_joints_to_pandas_csv import video_to_csv
 import pandas as pd
 from kinematic.joints_to_kinematics_data import JointsToKinematicsData
 from constants.joints_ids_to_names import joints_to_track

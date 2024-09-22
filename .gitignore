@@ -1,3 +1,8 @@
 *venv
-*myenv
 *video
+*__pycache__
+*myenv
+*bin
+*include
+*lib
+*share

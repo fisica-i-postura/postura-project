@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import pandas as pd
 from variables.joints_ids_to_names import joints_to_track
-from variables.constants import FRAME_INDEX, JOINT_ID, X_POSITION, Y_POSITION, VISIBILITY
+from variables.constants import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALIZED, Y_POSITION_NORMALIZED, VISIBILITY, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND
 
 def video_to_csv(path: str,csv: str):
     cap = cv2.VideoCapture(path)
@@ -46,8 +46,8 @@ def video_to_csv(path: str,csv: str):
                 data.append({
                     FRAME_INDEX: frame_number,      # Número de frame
                     JOINT_ID: joint_id,       # Número de la articulación
-                    X_POSITION: joint.x,           # Posición x (normalizada)
-                    Y_POSITION: joint.y,           # Posición y (normalizada)
+                    X_POSITION_NORMALIZED: joint.x,           # Posición x (normalizada)
+                    Y_POSITION_NORMALIZED: joint.y,           # Posición y (normalizada)
                     VISIBILITY: joint.visibility  # Visibilidad
                 })
 
@@ -59,16 +59,16 @@ def video_to_csv(path: str,csv: str):
     df = pd.DataFrame(data)
 
     # Multiplicar los valores de 'x' por el ancho y los de 'y' por el alto para desnormalizar
-    df['x_abs'] = df[X_POSITION] * resolution[0]
-    df['y_abs'] = df[Y_POSITION] * resolution[1]
+    df[X_POSITION_ABSOLUTE] = df[X_POSITION_NORMALIZED] * resolution[0]
+    df[Y_POSITION_ABSOLUTE] = df[Y_POSITION_NORMALIZED] * resolution[1]
 
     # Crear una nueva columna que indica el segundo en que se encuentra cada frame
-    df['second'] = df[FRAME_INDEX] // fps
+    df[SECOND] = df[FRAME_INDEX] // fps
 
     # Agrupar por cada segundo y calcular la media de las posiciones x e y para cada articulación
     grouped_df = df.groupby(['second', JOINT_ID]).agg({
-        'x_abs': 'mean',
-        'y_abs': 'mean',
+        X_POSITION_ABSOLUTE: 'mean',
+        Y_POSITION_ABSOLUTE: 'mean',
         VISIBILITY: 'mean'  # También se puede calcular la visibilidad media
     }).reset_index()
 

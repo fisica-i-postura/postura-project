@@ -1,10 +1,11 @@
 import pandas as pd
 from joint_kinematics import JointKinematics
+from variables.constants import JOINT_ID
 
 class JointsToKinematicsData:
     def __init__(self, df: pd.DataFrame) -> None:
         """Given a dataframe with joints data, models a map of joint_id to JointKinematics"""
-        joints = df.groupby('a')
+        joints = df.groupby(JOINT_ID)
         self._joint_id_to_kinematics_map = {joint_id: JointKinematics(data) for joint_id, data in joints}
 
     def get_joint(self, joint_id: int):

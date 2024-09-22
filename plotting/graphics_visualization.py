@@ -18,11 +18,15 @@ joint_names = {
 }
 
 # Crear la carpeta si no existe
-output_dir = os.path.join(os.getcwd(), "images_graphics")
+output_dir = os.path.join(os.getcwd(), "resources/plots")
 if not os.path.exists(output_dir):
     os.makedirs(output_dir, exist_ok=True) 
 
-def plot_kinematics_continuous(time, data, smooth_data, confidence, ylabel, title, filename):
+def plot_kinematics_continuous(time, data, smooth_data, confidence, ylabel, title, filename, out_dir=output_dir):
+
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+
     fig, ax = plt.subplots()
 
     # Revisar y manejar NaN/Inf en los datos
@@ -72,16 +76,17 @@ def plot_kinematics_continuous(time, data, smooth_data, confidence, ylabel, titl
     ax.legend(handles=[high_conf_raw, low_conf_raw, high_conf_smooth, low_conf_smooth], loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
 
     # Guardar el gráfico como PNG
-    plt.savefig(os.path.join(output_dir, filename), bbox_inches='tight')
+    plt.savefig(os.path.join(out_dir, filename), bbox_inches='tight')
     plt.close()
 
-def plot_joint_kinematics(joint_id, kinematics):
+def plot_joint_kinematics(joint_id, kinematics, output_dir=output_dir):
     # Posición X vs Tiempo
     plot_kinematics_continuous(
         kinematics.t, kinematics.x_position, kinematics.x_position_smooth, kinematics.p,
         ylabel="Posición X (m)",
         title=f"Articulación {joint_id} ({joint_names[joint_id]}): Posición X vs Tiempo",
-        filename=f"joint_{joint_id}_x_position_vs_time.png"
+        filename=f"joint_{joint_id}_x_position_vs_time.png",
+        out_dir=output_dir
     )
 
     # Posición Y vs Tiempo
@@ -89,7 +94,8 @@ def plot_joint_kinematics(joint_id, kinematics):
         kinematics.t, kinematics.y_position, kinematics.y_position_smooth, kinematics.p,
         ylabel="Posición Y (m)",
         title=f"Articulación {joint_id} ({joint_names[joint_id]}): Posición Y vs Tiempo",
-        filename=f"joint_{joint_id}_y_position_vs_time.png"
+        filename=f"joint_{joint_id}_y_position_vs_time.png",
+        out_dir=output_dir
     )
 
     # Velocidad vs Tiempo
@@ -97,7 +103,8 @@ def plot_joint_kinematics(joint_id, kinematics):
         kinematics.t, kinematics.velocity, kinematics.velocity_smooth, kinematics.p,
         ylabel="Velocidad (m/s)",
         title=f"Articulación {joint_id} ({joint_names[joint_id]}): Velocidad vs Tiempo",
-        filename=f"joint_{joint_id}_velocity_vs_time.png"
+        filename=f"joint_{joint_id}_velocity_vs_time.png",
+        out_dir=output_dir
     )
 
     # Aceleración vs Tiempo
@@ -105,19 +112,20 @@ def plot_joint_kinematics(joint_id, kinematics):
         kinematics.t, kinematics.accel, kinematics.accel_smooth, kinematics.p,
         ylabel="Aceleración (m/s²)",
         title=f"Articulación {joint_id} ({joint_names[joint_id]}): Aceleración vs Tiempo",
-        filename=f"joint_{joint_id}_acceleration_vs_time.png"
+        filename=f"joint_{joint_id}_acceleration_vs_time.png",
+        out_dir=output_dir
     )
 
-# Carga los datos
-PATH = './resources/joints_per_second.csv'
-df = pd.read_csv(PATH)
-
-# Crea un objeto JointsToKinematicsData
-joints_kinematics_data = JointsToKinematicsData(df)
-
-# Lista de articulaciones que deseamos graficar.
-joint_ids = [11, 12, 15, 16, 23, 27, 28]
-
-for joint_id in joint_ids:
-    kinematics = joints_kinematics_data.get_joint(joint_id)
-    plot_joint_kinematics(joint_id, kinematics)
+# # Carga los datos
+# PATH = './resources/joints_per_second.csv'
+# df = pd.read_csv(PATH)
+#
+# # Crea un objeto JointsToKinematicsData
+# joints_kinematics_data = JointsToKinematicsData(df)
+#
+# # Lista de articulaciones que deseamos graficar.
+# joint_ids = [11, 12, 15, 16, 23, 27, 28]
+#
+# for joint_id in joint_ids:
+#     kinematics = joints_kinematics_data.get_joint(joint_id)
+#     plot_joint_kinematics(joint_id, kinematics)

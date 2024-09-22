@@ -1,8 +1,9 @@
 *venv
-*video
+*videos
 *__pycache__
 *myenv
 *bin
 *include
 *lib
 *share
+/resources/videos/

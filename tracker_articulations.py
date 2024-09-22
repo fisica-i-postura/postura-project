@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import pandas as pd
 from variables.joints_ids_to_names import joints_to_track
-from variables.constants import FRAME, JOINT_ID, X_POS, Y_POS, VISIBILITY
+from variables.constants import FRAME_INDEX, JOINT_ID, X_POSITION, Y_POSITION, VISIBILITY
 
 def video_to_csv(path: str,csv: str):
     cap = cv2.VideoCapture(path)
@@ -44,10 +44,10 @@ def video_to_csv(path: str,csv: str):
                 
                 # Guardar los datos de las articulaciones con posiciones normalizadas
                 data.append({
-                    FRAME: frame_number,      # Número de frame
+                    FRAME_INDEX: frame_number,      # Número de frame
                     JOINT_ID: joint_id,       # Número de la articulación
-                    X_POS: joint.x,           # Posición x (normalizada)
-                    Y_POS: joint.y,           # Posición y (normalizada)
+                    X_POSITION: joint.x,           # Posición x (normalizada)
+                    Y_POSITION: joint.y,           # Posición y (normalizada)
                     VISIBILITY: joint.visibility  # Visibilidad
                 })
 
@@ -59,11 +59,11 @@ def video_to_csv(path: str,csv: str):
     df = pd.DataFrame(data)
 
     # Multiplicar los valores de 'x' por el ancho y los de 'y' por el alto para desnormalizar
-    df['x_abs'] = df[X_POS] * resolution[0]
-    df['y_abs'] = df[Y_POS] * resolution[1]
+    df['x_abs'] = df[X_POSITION] * resolution[0]
+    df['y_abs'] = df[Y_POSITION] * resolution[1]
 
     # Crear una nueva columna que indica el segundo en que se encuentra cada frame
-    df['second'] = df[FRAME] // fps
+    df['second'] = df[FRAME_INDEX] // fps
 
     # Agrupar por cada segundo y calcular la media de las posiciones x e y para cada articulación
     grouped_df = df.groupby(['second', JOINT_ID]).agg({

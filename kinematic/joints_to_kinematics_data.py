@@ -1,6 +1,6 @@
 import pandas as pd
 from kinematic.joint_kinematics import JointKinematics
-from variables.constants import JOINT_ID
+from constants.df_columns_names import JOINT_ID
 
 class JointsToKinematicsData:
     def __init__(self, df: pd.DataFrame, name) -> None:

@@ -2,7 +2,7 @@ import os
 from tracking.tracker_articulations import video_to_csv
 import pandas as pd
 from kinematic.joints_to_kinematics_data import JointsToKinematicsData
-from variables.joints_ids_to_names import joints_to_track
+from constants.joints_ids_to_names import joints_to_track
 from plotting.graphics_visualization import plot_joint_kinematics
 
 videos_dir = './resources/videos'

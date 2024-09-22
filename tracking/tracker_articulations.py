@@ -1,8 +1,8 @@
 import cv2
 import mediapipe as mp
 import pandas as pd
-from variables.joints_ids_to_names import joints_to_track
-from variables.constants import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALIZED, Y_POSITION_NORMALIZED, VISIBILITY, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND
+from constants.joints_ids_to_names import joints_to_track
+from constants.df_columns_names import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALIZED, Y_POSITION_NORMALIZED, VISIBILITY, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND
 
 def video_to_csv(path: str, csv: str):
     cap = cv2.VideoCapture(path)

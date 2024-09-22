@@ -1,7 +1,7 @@
 from kinematic.kinematic_equations_utils import variation, resultant
 import pandas as pd
 from kinematic.dataset_smoothing import smooth
-from variables.constants import SECOND, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, VISIBILITY
+from constants.df_columns_names import SECOND, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, VISIBILITY
 
 class JointKinematics:
     def __init__(self, joint_df: pd.DataFrame) -> None:

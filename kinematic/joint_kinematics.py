@@ -1,14 +1,15 @@
-from kinematic_equations_utils import variation, resultant
+from kinematic.kinematic_equations_utils import variation, resultant
 import pandas as pd
-from dataset_smoothing import smooth
+from kinematic.dataset_smoothing import smooth
+from constants.df_columns_names import SECOND, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, VISIBILITY
 
 class JointKinematics:
     def __init__(self, joint_df: pd.DataFrame) -> None:
         """Models the kinematics datasets for a given joint"""
-        self.t = joint_df['second'].to_numpy()
-        self.x_position = joint_df['x_abs'].to_numpy()
-        self.y_position = joint_df['y_abs'].to_numpy()
-        self.p = joint_df["v"].to_numpy()
+        self.t = joint_df[SECOND].to_numpy()
+        self.x_position = joint_df[X_POSITION_ABSOLUTE].to_numpy()
+        self.y_position = joint_df[Y_POSITION_ABSOLUTE].to_numpy()
+        self.p = joint_df[VISIBILITY].to_numpy()
 
         self.x_velocity = None
         self.y_velocity = None

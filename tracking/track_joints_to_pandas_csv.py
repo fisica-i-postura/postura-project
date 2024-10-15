@@ -28,10 +28,13 @@ def calculate_pixel_distance(df, joint_a, joint_b):
 
 def video_to_csv(path: str, csv: str):
 
-    #codigo hardcodeado momentaniamente
-    joint_a = 5
-    joint_b = 4
-    real_distance_meters = 3
+    #codigo hardcodeado momentaniamente 
+    # tener en cuenta que las articulaciones que pongas en joint_a y joint_b
+    # tienen que estar entre las articulaciones que se trackean, osea las que 
+    # aparecen en el archivo joints_ids_to_names.py   
+    joint_a = 11
+    joint_b = 12
+    real_distance_meters = 0.35
 
 
     cap = cv2.VideoCapture(path)

@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from kinematic.dataset_smoothing import smooth
 from constants.df_columns_names import JOINT_ID, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND
 
 RIGHT_SHOULDER = 12
@@ -18,8 +19,8 @@ class JointPositions:
 
 
 def get_joint_as_positions(joints, joint) -> JointPositions:
-    return JointPositions(joints.get_group(joint)[X_POSITION_ABSOLUTE].to_numpy(),
-                          joints.get_group(joint)[Y_POSITION_ABSOLUTE].to_numpy())
+    return JointPositions(smooth(joints.get_group(joint)[X_POSITION_ABSOLUTE].to_numpy()),
+                          smooth(joints.get_group(joint)[Y_POSITION_ABSOLUTE].to_numpy()))
 
 
 def get_angle(fixed_points: JointPositions, moving_points: JointPositions) -> np.ndarray:

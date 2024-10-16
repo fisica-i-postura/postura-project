@@ -45,3 +45,4 @@ if __name__ == '__main__':
     kinematics_data = build_kinematics_data()
     process_kinematics_plots(kinematics_data)
     print('Proceso finalizado')
+

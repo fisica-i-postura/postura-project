@@ -26,7 +26,7 @@ def get_joint_as_positions(joints, joint) -> JointPositions:
 def get_angle(fixed_points: JointPositions, moving_points: JointPositions) -> np.ndarray:
     x_diff = moving_points.x - fixed_points.x
     y_diff = moving_points.y - fixed_points.y
-    return np.degrees(np.arctan2(x_diff, y_diff))
+    return np.degrees(np.arctan(x_diff, y_diff))
 
 
 class Pendulum:

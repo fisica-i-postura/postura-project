@@ -15,7 +15,7 @@ def get_videos_paths():
 
 
 def get_csv_path(path: str):
-    return path.replace('.mp4', '.csv').replace('videos', 'csv')
+    return path.replace('.mov', '.csv').replace('videos', 'csv')
 
 
 def process_videos(paths: list[str]):
@@ -50,9 +50,9 @@ def process_pendulum():
 
 
 if __name__ == '__main__':
-    # videos_paths = get_videos_paths()
-    # process_videos(videos_paths)
-    # kinematics_data = build_kinematics_data()
-    # process_kinematics_plots(kinematics_data)
+    videos_paths = get_videos_paths()
+    process_videos(videos_paths)
+    kinematics_data = build_kinematics_data()
+    process_kinematics_plots(kinematics_data)
     process_pendulum()
     print('Proceso finalizado')

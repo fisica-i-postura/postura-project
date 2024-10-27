@@ -14,7 +14,9 @@ joint_names = {
     16: "Muñeca derecha",
     15: "Muñeca izquierda",
     12: "Hombro derecho",
-    11: "Hombro izquierdo"
+    11: "Hombro izquierdo",
+    26: "Rodilla derecha",
+    14: "Codo derecho",
 }
 
 # Crear la carpeta si no existe

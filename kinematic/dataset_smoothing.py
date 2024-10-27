@@ -3,5 +3,5 @@ from scipy.signal import savgol_filter
 
 def smooth(dataset: np.ndarray):
     """Smooths the dataset using Savitzky-Golay filter"""
-    window_length = min(11, len(dataset))
+    window_length = min(5, len(dataset))
     return savgol_filter(dataset, window_length=window_length, polyorder=3)

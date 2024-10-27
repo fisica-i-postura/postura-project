@@ -32,9 +32,9 @@ def video_to_csv(path: str, csv: str):
     # tener en cuenta que las articulaciones que pongas en joint_a y joint_b
     # tienen que estar entre las articulaciones que se trackean, osea las que 
     # aparecen en el archivo joints_ids_to_names.py   
-    joint_a = 11
-    joint_b = 12
-    real_distance_meters = 0.35
+    joint_a = 12
+    joint_b = 14
+    real_distance_meters = 0.33
 
 
     cap = cv2.VideoCapture(path)

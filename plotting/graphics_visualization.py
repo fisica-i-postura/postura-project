@@ -117,17 +117,3 @@ def plot_joint_kinematics(joint_id, kinematics, output_dir=output_dir):
         filename=f"joint_{joint_id}_acceleration_vs_time.png",
         out_dir=output_dir
     )
-
-# # Carga los datos
-# PATH = './resources/joints_per_second.csv'
-# df = pd.read_csv(PATH)
-#
-# # Crea un objeto JointsToKinematicsData
-# joints_kinematics_data = JointsToKinematicsData(df)
-#
-# # Lista de articulaciones que deseamos graficar.
-# joint_ids = [11, 12, 15, 16, 23, 27, 28]
-#
-# for joint_id in joint_ids:
-#     kinematics = joints_kinematics_data.get_joint(joint_id)
-#     plot_joint_kinematics(joint_id, kinematics)

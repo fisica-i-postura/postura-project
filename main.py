@@ -1,5 +1,4 @@
 import os
-
 from pendulum.plot import plot_pendulum
 from tracking.track_joints_to_pandas_csv import video_to_csv
 import pandas as pd
@@ -15,13 +14,15 @@ def get_videos_paths():
 
 
 def get_csv_path(path: str):
-    return path.replace('.mov', '.csv').replace('videos', 'csv')
+    return path.replace('.mp4', '.csv').replace('videos', 'csv')
 
 
 def process_videos(paths: list[str]):
     for path in paths:
         csv_path = get_csv_path(path)
-        video_to_csv(path, csv_path)
+        output_video_path = path.replace('.mp4', '_processed.mp4').replace('videos', './resources/processed_videos')
+        video_to_csv(path, csv_path, output_video_path)
+
 
 
 csv_dir = './resources/csv'

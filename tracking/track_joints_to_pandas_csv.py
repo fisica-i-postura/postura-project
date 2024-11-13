@@ -26,19 +26,23 @@ def calculate_pixel_distance(df, joint_a, joint_b):
     return pixel_distance
 
 
-def video_to_csv(path: str, csv: str):
+def video_to_csv(path: str, csv: str, output_video_path: str):
 
     #codigo hardcodeado momentaniamente 
     # tener en cuenta que las articulaciones que pongas en joint_a y joint_b
     # tienen que estar entre las articulaciones que se trackean, osea las que 
     # aparecen en el archivo joints_ids_to_names.py   
-    joint_a = 12
+    joint_a = 16
     joint_b = 14
-    real_distance_meters = 0.33
+    real_distance_meters = 0.27
 
 
     cap = cv2.VideoCapture(path)
     mp_pose = mp.solutions.pose
+    pose = mp_pose.Pose(
+        static_image_mode=False,
+        min_tracking_confidence=0.5
+    ) 
 
     # Verificar si el video se pudo abrir
     if not cap.isOpened():
@@ -53,13 +57,10 @@ def video_to_csv(path: str, csv: str):
     # Calcular los fotogramas por segundo (FPS)
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    data = []
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_video_path, fourcc, fps, resolution)
 
-    pose = mp_pose.Pose(
-        static_image_mode=False,
-        min_tracking_confidence=0.5
-    )    
-
+    data = []       
     frame_number = 0
 
     while cap.isOpened():
@@ -83,6 +84,14 @@ def video_to_csv(path: str, csv: str):
                     VISIBILITY: joint.visibility                # Visibilidad
                 })
 
+                x_abs = int(joint.x * width)
+                y_abs = int((1 - joint.y) * height)
+                ##cv2.circle(frame, (x_abs, y_abs), 5, (0, 255, 0), -1)  # Círculo verde para cada landmark
+
+            mp.solutions.drawing_utils.draw_landmarks(
+            frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+        out.write(frame)
         frame_number += 1
 
     cap.release()
@@ -109,4 +118,4 @@ def video_to_csv(path: str, csv: str):
 
     df.to_csv(csv, index=False)
 
-    print(f"Archivo '{csv}' generado correctamente.")
+    print(f"Archivo CSV '{csv}' y video procesado '{output_video_path}' generados correctamente.")

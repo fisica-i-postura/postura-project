@@ -9,4 +9,4 @@ def plot_pendulum(pendulum: Pendulum, plot_path='resources/pendulum.png'):
     plt.title('Shoulder-Wrist angle vs. time')
     plt.legend()
     plt.savefig(plot_path)
-    #plt.show()
+    plt.show()

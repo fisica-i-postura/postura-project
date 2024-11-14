@@ -18,10 +18,10 @@ def calculate_pixel_distance(df, joint_a, joint_b):
     joint_b_data = df[df[JOINT_ID] == joint_b]
 
     # Calcular la distancia en píxeles entre A y B en el primer frame disponible
-    x_a = joint_a_data.iloc[0][X_POSITION_ABSOLUTE]
-    y_a = joint_a_data.iloc[0][Y_POSITION_ABSOLUTE]
-    x_b = joint_b_data.iloc[0][X_POSITION_ABSOLUTE]
-    y_b = joint_b_data.iloc[0][Y_POSITION_ABSOLUTE]
+    x_a = joint_a_data.iloc[0][X_POSITION_IN_PX]
+    y_a = joint_a_data.iloc[0][Y_POSITION_IN_PX]
+    x_b = joint_b_data.iloc[0][X_POSITION_IN_PX]
+    y_b = joint_b_data.iloc[0][Y_POSITION_IN_PX]
 
     # Distancia Euclidiana en píxeles
     pixel_distance = ((x_b - x_a) ** 2 + (y_b - y_a) ** 2) ** 0.5

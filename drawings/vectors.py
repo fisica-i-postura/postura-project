@@ -4,7 +4,7 @@ from globals.video_metadata import VideoMetadata
 from kinematic.joint_kinematics import JointKinematics
 
 class Vector:
-    def __init__(self, xy: tuple[float, float], origin: tuple[float, float] = (0, 0), magnitude: float = -1) -> None:
+    def __init__(self, xy: tuple[int, int], origin: tuple[int, int] = (0, 0), magnitude: float = -1) -> None:
         self.xy = xy
         self.origin = origin
         self.translation = (origin[0] + xy[0], origin[1] + xy[1])

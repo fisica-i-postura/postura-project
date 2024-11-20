@@ -1,35 +1,12 @@
-from dataclasses import dataclass
-
 import numpy as np
 
-from drawings.colors import Color
 from drawings.cv2_draw_utils import Shape, Cv2DrawUtils
+from drawings.draw_configs import DrawType, JointDrawConfig
 from drawings.vectors import KinematicsVectors
 from globals.video_analysis import VideoAnalysis
-from enum import Enum, auto
 
 
-class DrawAxis(Enum):
-    X = auto()
-    Y = auto()
-    R = auto()
-
-
-class DrawType(Enum):
-    POSITION = auto()
-    VELOCITY = auto()
-    ACCELERATION = auto()
-
-
-@dataclass
-class JointDrawConfig:
-    joint_id: int
-    draw_type: DrawType
-    draw_axis: DrawAxis
-    color: Color
-
-
-def get_shapes(kinematic_vectors: KinematicsVectors, draw_type: DrawType, frame_idx: int) -> list[Shape]:
+def get_shape(kinematic_vectors: KinematicsVectors, draw_type: DrawType, frame_idx: int) -> Shape:
     match draw_type:
         case DrawType.POSITION:
             return kinematic_vectors.position_vectors[frame_idx]
@@ -48,9 +25,5 @@ class DrawHelper:
     def draw(self, frame: np.ndarray, frame_idx: int):
         for joint_draw_config in self.joint_draw_configs:
             joint_analysis = self.joints_analysis[joint_draw_config.joint_id].kinematics_vectors
-            vectors = get_shapes(joint_analysis, joint_draw_config.draw_type, frame_idx)
-            self.draw_shapes(frame, vectors, joint_draw_config)
-
-    def draw_shapes(self, frame, vectors, joint_draw_config):
-        for vector in vectors:
-            self.cv2_draw_util.draw_vector(frame, vector, joint_draw_config.color)
+            shape = get_shape(joint_analysis, joint_draw_config.draw_type, frame_idx)
+            self.cv2_draw_util.draw_vector(frame, shape, joint_draw_config.color, joint_draw_config.draw_axis)

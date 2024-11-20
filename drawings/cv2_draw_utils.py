@@ -3,14 +3,13 @@ from math import isnan
 import cv2
 import numpy as np
 
-from drawings.draw_helper import DrawAxis
-from drawings.colors import Color
+from drawings.draw_configs import DrawAxis
 from drawings.vectors import Vector
 
 Shape = Vector | None
 Point = tuple[int, int] | tuple[float, float]
 DrawablePoint = tuple[int, int]
-
+Color = tuple[int, int, int]
 
 class Cv2DrawUtils:
 
@@ -38,7 +37,7 @@ class Cv2DrawUtils:
         px, py = point
 
         assert isinstance(axis, DrawAxis)
-        match DrawAxis:
+        match axis:
             case DrawAxis.R:
                 cv2.putText(frame, f'{vector.magnitude:.2f} m', point, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, point, color, 2)

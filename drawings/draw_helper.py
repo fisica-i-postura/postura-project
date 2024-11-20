@@ -2,13 +2,11 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from drawings.colors import Color
 from drawings.cv2_draw_utils import Shape, Cv2DrawUtils
 from drawings.vectors import KinematicsVectors
 from globals.video_analysis import VideoAnalysis
 from enum import Enum, auto
-
-
-Color = tuple[int, int, int]
 
 
 class DrawAxis(Enum):

@@ -3,7 +3,8 @@ from math import isnan
 import cv2
 import numpy as np
 
-from drawings.draw_helper import Color, DrawAxis
+from drawings.draw_helper import DrawAxis
+from drawings.colors import Color
 from drawings.vectors import Vector
 
 Shape = Vector | None

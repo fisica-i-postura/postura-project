@@ -11,6 +11,7 @@ class JointKinematics:
         self.y_position = joint_df[Y_POSITION_ABSOLUTE].to_numpy()
         self.p = joint_df[VISIBILITY].to_numpy()
 
+        self.position = resultant(self.x_position, self.y_position)
         self.x_velocity = None
         self.y_velocity = None
         self.velocity = None

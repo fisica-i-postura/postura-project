@@ -9,7 +9,9 @@ from constants.df_columns_names import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALI
 # Función para calcular el factor de conversión (pixeles a metros)
 def calculate_conversion_factor(real_distance_meters, pixel_distance):
     # Regla de tres simple: metros / píxeles
-    return real_distance_meters / pixel_distance
+    meters_pixel_distance = real_distance_meters / pixel_distance
+    print(f"Factor de conversión (metros/píxeles): {meters_pixel_distance}")
+    return meters_pixel_distance
 
 # Función para calcular la distancia en píxeles entre dos articulaciones
 def calculate_pixel_distance(df, joint_a, joint_b):
@@ -25,6 +27,7 @@ def calculate_pixel_distance(df, joint_a, joint_b):
 
     # Distancia Euclidiana en píxeles
     pixel_distance = ((x_b - x_a) ** 2 + (y_b - y_a) ** 2) ** 0.5
+    print(f"Distancia en píxeles entre las articulaciones {joint_a} y {joint_b}: {pixel_distance}")
     return pixel_distance
 
 

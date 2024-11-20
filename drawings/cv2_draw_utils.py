@@ -11,6 +11,8 @@ Point = tuple[int, int] | tuple[float, float]
 DrawablePoint = tuple[int, int]
 Color = tuple[int, int, int]
 
+TEXT_PADDING_PX = 25
+
 class Cv2DrawUtils:
 
     def __init__(self, video_height: int) -> None:
@@ -39,11 +41,13 @@ class Cv2DrawUtils:
         assert isinstance(axis, DrawAxis)
         match axis:
             case DrawAxis.R:
-                cv2.putText(frame, f'{vector.magnitude:.2f} m', point, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+                cv2.putText(frame, f'{vector.magnitude:.2f} m', (px + TEXT_PADDING_PX, py + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, point, color, 2)
             case DrawAxis.X:
+                cv2.putText(frame, f'{px - x0:.2f} m', (px + TEXT_PADDING_PX, y0 + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, (px, y0), color, 2)
             case DrawAxis.Y:
+                cv2.putText(frame, f'{py - y0:.2f} m', (x0 + TEXT_PADDING_PX, py + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, (x0, py), color, 2)
 
     def to_cv2_point(self, point: Point) -> DrawablePoint:

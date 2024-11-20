@@ -5,7 +5,7 @@ class VideoMetadata:
     # path: str
     # fps: float
     # duration: float
-    # resolution: tuple[int, int]
+    resolution: tuple[int, int]
     # subject_gender: str
     # subject_length: float
     # subject_mass: float

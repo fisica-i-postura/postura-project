@@ -66,6 +66,6 @@ if __name__ == '__main__':
     for video in get_videos_paths():
         cap = cv2.VideoCapture(video)
         df = pd.read_csv(get_csv_path(video))
-        metadata = VideoMetadata(1/0.0019805559026734917)
+        metadata = VideoMetadata((1920, 1080), 1/0.0019805559026734917)
         analysis = VideoAnalysis(metadata, df)
         display(video, analysis, None)

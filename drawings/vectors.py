@@ -25,8 +25,8 @@ class KinematicsVectors:
         self.acceleration_vectors = self.build_acceleration_vectors()
 
     def build_position_vectors(self):
-        x_pos_in_px = self.kinematics_data.x_position * self.video_metadata.pixels_per_meter
-        y_pos_in_px = self.kinematics_data.y_position * self.video_metadata.pixels_per_meter
+        x_pos_in_px = self.kinematics_data.x_position
+        y_pos_in_px = self.kinematics_data.y_position
         o_vector = Vector((0, 0))
         origins = [o_vector] * len(x_pos_in_px)
         return self.build_vectors((x_pos_in_px, y_pos_in_px), origins, self.kinematics_data.position)

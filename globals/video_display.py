@@ -1,12 +1,19 @@
 import cv2
 
-from drawings.draw_helper import DrawHelper, JointDrawConfig, DrawType, DrawAxis
+from drawings.draw_helper import DrawHelper
+from drawings.draw_configs import DrawAxis, DrawType, JointDrawConfig
 from globals.video_analysis import VideoAnalysis
+from drawings.colors import Color
 
 
 def get_draw_configs() -> list[JointDrawConfig]:
     return [
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=(0, 0, 255)),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value),
     ]
 
 
@@ -26,10 +33,7 @@ def display(video_path: str, video_analysis: VideoAnalysis, joints_to_track: dic
         if not ret:
             break
 
-        cv2.line(frame, (0, 0), (100, 100), (255, 0, 0), 5)
-        # draw_shape(frame, video_analysis.joints_analysis[12].kinematics_vectors.position_vectors[frame_idx])
-        # draw_shape(frame, video_analysis.joints_analysis[12].kinematics_vectors.velocity_vectors[frame_idx])
-        # draw_shape(frame, video_analysis.joints_analysis[12].kinematics_vectors.acceleration_vectors[frame_idx])
+        draw_helper.draw(frame, frame_idx)
         cv2.imshow('Video', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

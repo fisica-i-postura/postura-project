@@ -2,12 +2,16 @@ import cv2
 import mediapipe as mp
 import pandas as pd
 from constants.joints_ids_to_names import joints_to_track
-from constants.df_columns_names import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALIZED, Y_POSITION_NORMALIZED, VISIBILITY, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND
+from constants.df_columns_names import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALIZED, Y_POSITION_NORMALIZED, VISIBILITY, \
+    X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND, X_POSITION_IN_PX, Y_POSITION_IN_PX
+
 
 # Función para calcular el factor de conversión (pixeles a metros)
 def calculate_conversion_factor(real_distance_meters, pixel_distance):
     # Regla de tres simple: metros / píxeles
-    return real_distance_meters / pixel_distance
+    meters_pixel_distance = real_distance_meters / pixel_distance
+    print(f"Factor de conversión (metros/píxeles): {meters_pixel_distance}")
+    return meters_pixel_distance
 
 # Función para calcular la distancia en píxeles entre dos articulaciones
 def calculate_pixel_distance(df, joint_a, joint_b):
@@ -16,13 +20,14 @@ def calculate_pixel_distance(df, joint_a, joint_b):
     joint_b_data = df[df[JOINT_ID] == joint_b]
 
     # Calcular la distancia en píxeles entre A y B en el primer frame disponible
-    x_a = joint_a_data.iloc[0][X_POSITION_ABSOLUTE]
-    y_a = joint_a_data.iloc[0][Y_POSITION_ABSOLUTE]
-    x_b = joint_b_data.iloc[0][X_POSITION_ABSOLUTE]
-    y_b = joint_b_data.iloc[0][Y_POSITION_ABSOLUTE]
+    x_a = joint_a_data.iloc[0][X_POSITION_IN_PX]
+    y_a = joint_a_data.iloc[0][Y_POSITION_IN_PX]
+    x_b = joint_b_data.iloc[0][X_POSITION_IN_PX]
+    y_b = joint_b_data.iloc[0][Y_POSITION_IN_PX]
 
     # Distancia Euclidiana en píxeles
     pixel_distance = ((x_b - x_a) ** 2 + (y_b - y_a) ** 2) ** 0.5
+    print(f"Distancia en píxeles entre las articulaciones {joint_a} y {joint_b}: {pixel_distance}")
     return pixel_distance
 
 
@@ -100,8 +105,8 @@ def video_to_csv(path: str, csv: str, output_video_path: str):
     df = pd.DataFrame(data)    
 
     # Multiplicar los valores de 'x' por el ancho y los de 'y' por el alto para desnormalizar
-    df[X_POSITION_ABSOLUTE] = df[X_POSITION_NORMALIZED] * resolution[0]
-    df[Y_POSITION_ABSOLUTE] = df[Y_POSITION_NORMALIZED] * resolution[1]
+    df[X_POSITION_IN_PX] = df[X_POSITION_NORMALIZED] * resolution[0]
+    df[Y_POSITION_IN_PX] = df[Y_POSITION_NORMALIZED] * resolution[1]
 
     # Calcular la distancia en píxeles entre las articulaciones A y B
     pixel_distance = calculate_pixel_distance(df, joint_a, joint_b)
@@ -110,8 +115,8 @@ def video_to_csv(path: str, csv: str, output_video_path: str):
     conversion_factor = calculate_conversion_factor(real_distance_meters, pixel_distance)
 
     # Aplicar el factor de conversión para obtener los valores en metros
-    df[X_POSITION_ABSOLUTE] = df[X_POSITION_ABSOLUTE] * conversion_factor
-    df[Y_POSITION_ABSOLUTE] = df[Y_POSITION_ABSOLUTE] * conversion_factor
+    df[X_POSITION_ABSOLUTE] = df[X_POSITION_IN_PX] * conversion_factor
+    df[Y_POSITION_ABSOLUTE] = df[Y_POSITION_IN_PX] * conversion_factor
 
     # Crear una nueva columna que indica el segundo en que se encuentra cada frame
     df[SECOND] = df[FRAME_INDEX] / fps

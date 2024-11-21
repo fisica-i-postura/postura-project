@@ -21,11 +21,11 @@ def get_videos_paths():
     return [os.path.join(videos_dir, file) for file in files]
 
 def get_csv_path(path: str):
-    csv_filename = os.path.basename(path).replace('.mp4', '.csv')
+    csv_filename = os.path.basename(path).replace('.mov', '.csv')
     return os.path.join(csv_dir, csv_filename)
 
 def get_output_video_path(path: str):
-    video_filename = os.path.basename(path).replace('.mp4', '_processed.mp4')
+    video_filename = os.path.basename(path).replace('.mov', '_processed.mov')
     return os.path.join(processed_videos_dir, video_filename)
 
 def process_videos(paths: list[str]):

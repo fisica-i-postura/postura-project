@@ -37,6 +37,9 @@ class VideoPlayer(tk.Tk):
         self.stop_playback = False
         self.video_analysis = None
         self.draw_helper = None
+        self.show_vectors = False
+        self.current_frame_data = None  # Almacena el frame actual   
+
         
         # Definir colores como variables de clase
         self.bg_color = '#1a2639'  # Azul marino
@@ -77,10 +80,25 @@ class VideoPlayer(tk.Tk):
         self.load_button.pack(pady=10)
         self.round_button(self.load_button)
 
+         # Checkbox para mostrar vectores
+        self.vector_var = tk.BooleanVar()
+        self.vector_checkbox = tk.Checkbutton(
+            self.video_frame,
+            text="Mostrar Vectores",
+            variable=self.vector_var,
+            command=self.toggle_vectors,
+            bg=self.bg_color,
+            fg=self.text_color,
+            selectcolor=self.button_color,
+            activebackground=self.bg_color,
+            activeforeground=self.text_color
+        )
+        self.vector_checkbox.pack(pady=5)
+
         # Canvas para el video
         self.video_canvas = tk.Canvas(self.video_frame, 
-                                    width=640, 
-                                    height=480,
+                                    width=1280, 
+                                    height=720,
                                     bg='black',
                                     highlightthickness=0)
         self.video_canvas.pack(pady=10)
@@ -89,7 +107,7 @@ class VideoPlayer(tk.Tk):
         self.control_frame = tk.Frame(self.video_frame, bg=self.bg_color)
         self.control_frame.pack(pady=10)
 
-        # Botones de control
+         # Botones de control
         self.play_button = tk.Button(self.control_frame, 
                                    text="Play",
                                    command=self.play_video,
@@ -230,38 +248,41 @@ class VideoPlayer(tk.Tk):
         if not self.playing or self.cap is None:
             return
 
-        ret, frame = self.cap.read()
-        if ret:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(frame)
-            img = img.resize((640, 480), Image.LANCZOS)
-            img_tk = ImageTk.PhotoImage(img)
-            self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
-            self.current_image = img_tk
+        if self.update_frame():
             self.current_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
             self.progress.set(self.current_frame)
             self.after(33, self.play)
         else:
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            self.playing = False
+            self.playing = False    
 
     def stop_video(self):
         self.playing = False
         self.stop_playback = True
+        # Asegurarse de que el último frame se muestre correctamente
+        self.redraw_current_frame()
+
+    # def seek_video(self, position):
+    #     if self.cap is None:
+    #         return
+    #     frame_number = int(position)
+    #     self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
+    #     ret, frame = self.cap.read()
+    #     if ret:
+    #         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #         img = Image.fromarray(frame)
+    #         img = img.resize((1280, 720), Image.LANCZOS)
+    #         img_tk = ImageTk.PhotoImage(img)
+    #         self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
+    #         self.current_image = img_tk
+    #     self.current_frame = frame_number
 
     def seek_video(self, position):
         if self.cap is None:
             return
         frame_number = int(position)
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
-        ret, frame = self.cap.read()
-        if ret:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(frame)
-            img = img.resize((640, 480), Image.LANCZOS)
-            img_tk = ImageTk.PhotoImage(img)
-            self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
-            self.current_image = img_tk
+        self.update_frame()
         self.current_frame = frame_number
 
     def update_progress(self):
@@ -276,3 +297,84 @@ class VideoPlayer(tk.Tk):
         if self.cap:
             self.cap.release()
         self.destroy()
+
+    def toggle_vectors(self):
+        """Cambia entre mostrar y ocultar vectores"""
+        self.show_vectors = self.vector_var.get()
+        # Redibujar el frame actual con o sin vectores
+        self.redraw_current_frame()
+
+    def get_frame(self):
+        """Obtiene un nuevo frame del video"""
+        if self.cap is None:
+            return None, False
+
+        ret, frame = self.cap.read()
+        if ret:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            self.current_frame_data = frame.copy()  # Guardamos una copia del frame actual
+        return frame, ret
+    
+    def draw_vectors_on_frame(self, frame):
+        """Dibuja los vectores en el frame si están activados"""
+        if self.show_vectors and self.draw_helper is not None:
+            current_frame_idx = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES)) - 1
+            frame_copy = frame.copy()
+            self.draw_helper.draw(frame_copy, current_frame_idx)
+            return frame_copy
+        return frame
+    
+    def display_frame(self, frame):
+        """Muestra el frame en el canvas"""
+        if frame is not None:
+            img = Image.fromarray(frame)
+            img = img.resize((1280, 720), Image.LANCZOS)
+            img_tk = ImageTk.PhotoImage(img)
+            self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
+            self.current_image = img_tk
+
+    def redraw_current_frame(self):
+        """Redibuja el frame actual con o sin vectores"""
+        if self.current_frame_data is not None:
+            frame = self.current_frame_data.copy()
+            frame = self.draw_vectors_on_frame(frame)
+            self.display_frame(frame)
+
+
+    def update_frame(self):
+        """Actualiza el frame actual con o sin vectores"""
+        frame, ret = self.get_frame()
+        if not ret:
+            return False
+
+        frame = self.draw_vectors_on_frame(frame)
+        self.display_frame(frame)
+        return True
+
+    # def update_frame(self):
+    #     """Actualiza el frame actual con o sin vectores"""
+    #     if self.cap is None:
+    #         return False
+
+    #     ret, frame = self.cap.read()
+    #     if not ret:
+    #         return False
+
+    #     # Convertir frame a RGB
+    #     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    #     # Si los vectores están activados y tenemos el draw_helper
+    #     if self.show_vectors and self.draw_helper is not None:
+    #         current_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES)) - 1
+    #         self.draw_helper.draw(frame, current_frame)
+
+    #     # Redimensionar y mostrar el frame
+    #     img = Image.fromarray(frame)
+    #     img = img.resize((1280, 720), Image.LANCZOS)
+    #     img_tk = ImageTk.PhotoImage(img)
+    #     self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
+    #     self.current_image = img_tk
+    #     return True
+    
+
+    #853x480

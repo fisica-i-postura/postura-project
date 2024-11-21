@@ -1,5 +1,8 @@
 import os
 import pandas as pd
+
+from globals.video_analysis import VideoAnalysis
+from globals.video_metadata import VideoMetadata
 from pendulum.plot import plot_pendulum
 from tracking.track_joints_to_pandas_csv import video_to_csv
 from kinematic.joints_to_kinematics_data import JointsToKinematicsData
@@ -63,12 +66,17 @@ def main():
         kinematics_data = build_kinematics_data()
         process_kinematics_plots(kinematics_data)
         process_pendulum()
+
+        df = pd.read_csv(get_csv_path(video_path))
+        metadata = VideoMetadata((1920, 1080), 1/0.0019805559026734917)
+        analysis = VideoAnalysis(metadata, df)
         print('Proceso finalizado')
 
         # Obtener rutas de los gráficos generados
         figures_paths = [os.path.join(dp, f) for dp, dn, filenames in os.walk(plots_dir) for f in filenames if f.endswith('.png')]
 
         # Mostrar los gráficos generados
+        app.video_analysis = analysis
         app.plot_data(figures_paths)
 
         # Reproduce el video procesado en la interfaz gráfica

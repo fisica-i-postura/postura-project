@@ -7,6 +7,23 @@ from PIL import Image, ImageTk
 from threading import Thread
 import os
 
+from drawings.colors import Color
+from drawings.draw_configs import JointDrawConfig, DrawType, DrawAxis
+from drawings.draw_helper import DrawHelper
+
+def get_draw_configs() -> list[JointDrawConfig]:
+    return [
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value),
+    ]
+
+def x(joints: list[int], types: list[DrawType], axes: list[DrawAxis]) -> list[JointDrawConfig]:
+    return [JointDrawConfig(joint_id=joint, draw_type=draw_type, draw_axis=axis, color=Color.RED.value) for joint in joints for draw_type in types for axis in axes]
+
 class VideoPlayer(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -18,6 +35,8 @@ class VideoPlayer(tk.Tk):
         self.cap = None
         self.playing = False
         self.stop_playback = False
+        self.video_analysis = None
+        self.draw_helper = None
         
         # Definir colores como variables de clase
         self.bg_color = '#1a2639'  # Azul marino
@@ -199,6 +218,7 @@ class VideoPlayer(tk.Tk):
         self.update_progress()
 
     def play_video(self):
+        self.draw_helper = DrawHelper(self.video_analysis, get_draw_configs())
         if self.cap is None or not self.cap.isOpened():
             return
         self.playing = True

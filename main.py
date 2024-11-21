@@ -1,17 +1,17 @@
 import os
 
+import cv2
+import pandas as pd
+
+from constants.joints_ids_to_names import joints_to_track
 from globals.video_analysis import VideoAnalysis
 from globals.video_display import display
 from globals.video_metadata import VideoMetadata
-from pendulum.plot import plot_pendulum
-from tracking.track_joints_to_pandas_csv import video_to_csv
-import pandas as pd
 from kinematic.joints_to_kinematics_data import JointsToKinematicsData
-from constants.joints_ids_to_names import joints_to_track
-from plotting.graphics_visualization import plot_joint_kinematics
 from pendulum.model import Pendulum
-
-import cv2
+from pendulum.plot import plot_pendulum
+from plotting.graphics_visualization import plot_joint_kinematics
+from tracking.tracker import VideoInput, VideoTracker
 
 videos_dir = './resources/videos'
 def get_videos_paths():
@@ -25,9 +25,9 @@ def get_csv_path(path: str):
 
 def process_videos(paths: list[str]):
     for path in paths:
-        csv_path = get_csv_path(path)
-        video_to_csv(path, csv_path)
-
+        video_input = VideoInput(path, 12, 14, 0.33)
+        video_output = VideoTracker(video_input).process()
+        video_output.dataframe.to_csv(get_csv_path(path))
 
 csv_dir = './resources/csv'
 def get_csv_paths():

@@ -260,22 +260,7 @@ class VideoPlayer(tk.Tk):
         self.playing = False
         self.stop_playback = True
         # Asegurarse de que el último frame se muestre correctamente
-        self.redraw_current_frame()
-
-    # def seek_video(self, position):
-    #     if self.cap is None:
-    #         return
-    #     frame_number = int(position)
-    #     self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
-    #     ret, frame = self.cap.read()
-    #     if ret:
-    #         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    #         img = Image.fromarray(frame)
-    #         img = img.resize((1280, 720), Image.LANCZOS)
-    #         img_tk = ImageTk.PhotoImage(img)
-    #         self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
-    #         self.current_image = img_tk
-    #     self.current_frame = frame_number
+        self.redraw_current_frame()    
 
     def seek_video(self, position):
         if self.cap is None:
@@ -349,32 +334,6 @@ class VideoPlayer(tk.Tk):
 
         frame = self.draw_vectors_on_frame(frame)
         self.display_frame(frame)
-        return True
-
-    # def update_frame(self):
-    #     """Actualiza el frame actual con o sin vectores"""
-    #     if self.cap is None:
-    #         return False
-
-    #     ret, frame = self.cap.read()
-    #     if not ret:
-    #         return False
-
-    #     # Convertir frame a RGB
-    #     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-    #     # Si los vectores están activados y tenemos el draw_helper
-    #     if self.show_vectors and self.draw_helper is not None:
-    #         current_frame = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES)) - 1
-    #         self.draw_helper.draw(frame, current_frame)
-
-    #     # Redimensionar y mostrar el frame
-    #     img = Image.fromarray(frame)
-    #     img = img.resize((1280, 720), Image.LANCZOS)
-    #     img_tk = ImageTk.PhotoImage(img)
-    #     self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
-    #     self.current_image = img_tk
-    #     return True
-    
+        return True        
 
     #853x480

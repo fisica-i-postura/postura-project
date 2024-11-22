@@ -42,7 +42,7 @@ class PhysicsProcessor:
         metadata_path = path_helper.get_metadata_path()
         csv_path = path_helper.get_csv_path()
 
-        if os.path.exists(metadata_path) and os.path.exists(csv_path):
+        if metadata_path.exists() and csv_path.exists():
             return read_json_to_dataclass(metadata_path, VideoMetadata), pd.read_csv(csv_path)
         else:
             video_metadata, video_data = self._process_video()

@@ -1,9 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 from matplotlib.collections import LineCollection
-from kinematic.joints_to_kinematics_data import JointsToKinematicsData
 
 # Mapa de nombres de articulaciones
 joint_names = {
@@ -20,11 +18,11 @@ joint_names = {
 }
 
 # Crear la carpeta si no existe
-output_dir = os.path.join(os.getcwd(), "resources/plots")
-if not os.path.exists(output_dir):
-    os.makedirs(output_dir, exist_ok=True) 
+directory = os.path.join(os.getcwd(), "resources/plots")
+if not os.path.exists(directory):
+    os.makedirs(directory, exist_ok=True)
 
-def plot_kinematics_continuous(time, data, smooth_data, confidence, ylabel, title, filename, out_dir=output_dir):
+def plot_kinematics_continuous(time, data, smooth_data, confidence, ylabel, title, filename, out_dir=directory):
 
     if not os.path.exists(out_dir):
         os.makedirs(out_dir, exist_ok=True)
@@ -81,7 +79,7 @@ def plot_kinematics_continuous(time, data, smooth_data, confidence, ylabel, titl
     plt.savefig(os.path.join(out_dir, filename), bbox_inches='tight')
     plt.close()
 
-def plot_joint_kinematics(joint_id, kinematics, output_dir=output_dir):
+def plot_joint_kinematics(joint_id, kinematics, output_dir=directory):
     # Posición X vs Tiempo
     plot_kinematics_continuous(
         kinematics.t, kinematics.x_position, kinematics.x_position_smooth, kinematics.p,

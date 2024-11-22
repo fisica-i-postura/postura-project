@@ -1,19 +1,79 @@
+import json
 import os
+from dataclasses import dataclass, asdict
+from enum import Enum
+from pathlib import Path
+from typing import Any
 
-import cv2
 import pandas as pd
 
 from constants.joints_ids_to_names import joints_to_track
+from globals.paths import PathHelper
 from globals.video_analysis import VideoAnalysis
-from globals.video_display import display
 from globals.video_metadata import VideoMetadata
 from kinematic.joints_to_kinematics_data import JointsToKinematicsData
 from pendulum.model import Pendulum
 from pendulum.plot import plot_pendulum
 from plotting.graphics_visualization import plot_joint_kinematics
 from tracking.tracker import VideoInput, VideoTracker
+from globals.paths import get_videos_folder_path, get_csv_folder_path
 
-videos_dir = './resources/videos'
+class Gender(Enum):
+    MALE = 'M'
+    FEMALE = 'F'
+
+@dataclass
+class UserInput:
+    video_path: str
+    joints_distance_in_meters: float = 0.33
+    subject_gender: Gender = Gender.MALE
+    subject_weight: float = 85.0
+
+
+def read_json_to_dataclass(path: Path, cls: Any) -> Any:
+    with open(path, 'r') as file:
+        data = json.load(file)
+    return cls(**data)
+
+
+def write_dataclass_to_json(path: Path, obj: Any):
+    with open(path, 'w') as file:
+        json.dump(asdict(obj), file, indent=4)
+
+
+class PhysicsProcessor:
+    def __init__(self, user_input: UserInput):
+        self.user_input = user_input
+        self.video_metadata, self.video_raw_data = self._find_data_or_process()
+        self._create_plots_if_needed()
+        self.video_analysis = VideoAnalysis(self.video_metadata, self.video_raw_data)
+
+    def _find_data_or_process(self) -> tuple[VideoMetadata, pd.DataFrame]:
+        path_helper = PathHelper(Path(self.user_input.video_path))
+        metadata_path = path_helper.get_metadata_path()
+        csv_path = path_helper.get_csv_path()
+
+        if os.path.exists(metadata_path) and os.path.exists(csv_path):
+            return read_json_to_dataclass(metadata_path, VideoMetadata), pd.read_csv(csv_path)
+        else:
+            video_metadata, video_data = self._process_video()
+            write_dataclass_to_json(metadata_path, video_metadata)
+            video_data.to_csv(csv_path)
+            return video_metadata, video_data
+
+    def _process_video(self) -> tuple[VideoMetadata, pd.DataFrame]:
+        video_input = VideoInput(self.user_input.video_path, 12, 14, self.user_input.joints_distance_in_meters)
+        video_output = VideoTracker(video_input).process()
+        video_metadata = VideoMetadata(video_input.path, video_output.fps, video_output.resolution, self.user_input.subject_gender.value, self.user_input.subject_weight, video_output.pixels_per_meter)
+        return video_metadata, video_output.dataframe
+
+    @staticmethod
+    def _create_plots_if_needed():
+        process_kinematics_plots(build_kinematics_data())
+        process_pendulum()
+
+
+videos_dir = get_videos_folder_path()
 def get_videos_paths():
     files = os.listdir(videos_dir)
     return [os.path.join(videos_dir, file) for file in files]
@@ -27,9 +87,9 @@ def process_videos(paths: list[str]):
     for path in paths:
         video_input = VideoInput(path, 12, 14, 0.33)
         video_output = VideoTracker(video_input).process()
-        video_output.dataframe.to_csv(get_csv_path(path))
+        video_output.dataframe.to_csv(PathHelper(Path(path)).get_csv_path())
 
-csv_dir = './resources/csv'
+csv_dir = get_csv_folder_path()
 def get_csv_paths():
     files = os.listdir(csv_dir)
     return [os.path.join(csv_dir, file) for file in files]
@@ -37,7 +97,7 @@ def get_csv_paths():
 
 def build_kinematics_data() -> list[JointsToKinematicsData]:
     paths = get_csv_paths()
-    return [JointsToKinematicsData(pd.read_csv(path), 'resources/plots/' + os.path.basename(path).split(".")[0]) for path in paths]
+    return [JointsToKinematicsData(pd.read_csv(path), PathHelper(Path(path)).get_plots_folder_path().absolute()) for path in paths]
 
 
 def process_kinematics_plots(joints_kinematics_data: list[JointsToKinematicsData]):
@@ -54,18 +114,14 @@ def process_pendulum():
         plot_pendulum(pendulum, 'resources/plots/' + os.path.basename(path).split(".")[0] + '/pendulum.png')
 
 
-# if __name__ == '__main__':
-#     videos_paths = get_videos_paths()
-#     process_videos(videos_paths)
-#     kinematics_data = build_kinematics_data()
-#     process_kinematics_plots(kinematics_data)
-#     process_pendulum()
-#     print('Proceso finalizado')
-
 if __name__ == '__main__':
-    for video in get_videos_paths():
-        cap = cv2.VideoCapture(video)
-        df = pd.read_csv(get_csv_path(video))
-        metadata = VideoMetadata((1920, 1080), 1/0.0019805559026734917)
-        analysis = VideoAnalysis(metadata, df)
-        display(video, analysis, None)
+    for path in get_videos_paths():
+        PhysicsProcessor(UserInput(path))
+
+# if __name__ == '__main__':
+#     for video in get_videos_paths():
+#         cap = cv2.VideoCapture(video)
+#         df = pd.read_csv(PathHelper(Path(video)).get_csv_path())
+#         metadata = VideoMetadata((1920, 1080), 1/0.0019805559026734917)
+#         analysis = VideoAnalysis(metadata, df)
+#         display(video, analysis, None)

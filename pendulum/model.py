@@ -30,9 +30,28 @@ def get_angle(fixed_points: JointPositions, moving_points: JointPositions) -> np
 
 
 class Pendulum:
-    def __init__(self, df: pd.DataFrame) -> None:
+    def __init__(self, df: pd.DataFrame, mass: float, distance: float, inertia: float) -> None:
         joints = df[df[JOINT_ID].isin([RIGHT_SHOULDER, RIGHT_WRIST])].groupby(JOINT_ID)
         self.shoulder = get_joint_as_positions(joints, RIGHT_SHOULDER)
         self.wrist = get_joint_as_positions(joints, RIGHT_WRIST)
-        self.angle = get_angle(self.shoulder, self.wrist)
+        self.angle = np.radians(get_angle(self.shoulder, self.wrist))  # Ángulo experimental (en radianes)
         self.time = joints.get_group(RIGHT_SHOULDER)[SECOND].to_numpy()
+
+        # Parámetros físicos
+        self.mass = mass
+        self.distance = distance
+        self.inertia = inertia
+
+        # Frecuencia angular
+        self.angular_frequency = self.calculate_angular_frequency()
+
+        # Ángulo inicial
+        self.phi_0 = self.angle[0]  # Valor en t = 0
+
+    def calculate_angular_frequency(self) -> float:
+        g = 9.8  # Gravedad
+        return np.sqrt((self.mass * g * self.distance) / self.inertia)
+
+    def phi_at_t(self, t: float) -> float:
+        """Calcula \phi(t) teórico"""
+        return self.phi_0 * np.cos(self.angular_frequency * t)

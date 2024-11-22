@@ -38,6 +38,9 @@ class PathHelper:
         self.stem = path.stem
         self.suffix = path.suffix
 
+    def get_user_input_path(self) -> Path:
+        return Path(f'{get_user_inputs_folder_path()}/{self.stem}.json')
+
     def get_csv_path(self) -> Path:
         return Path(f'{get_csv_folder_path()}/{self.stem}.csv')
 

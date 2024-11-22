@@ -18,7 +18,7 @@ def bulk_process_videos():
         path_helper = PathHelper(Path(path))
         input_path = path_helper.get_user_input_path()
         if not input_path.exists():
-            logging.log(logging.ERROR, f'User input for {path} not found, skipping...')
+            logging.log(logging.WARN, f'User input for {path} not found, skipping...')
             continue
         user_input = read_json_to_dataclass(input_path, UserInput)
         user_input.video_path = path

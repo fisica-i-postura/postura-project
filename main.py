@@ -1,9 +1,7 @@
-from globals.bulk_processor import get_videos_paths
-from globals.physics_processor import UserInput, PhysicsProcessor
+from globals.bulk_processor import bulk_process_videos
 
 if __name__ == '__main__':
-    for path in get_videos_paths():
-        PhysicsProcessor(UserInput(path))
+    bulk_process_videos()
 
 # if __name__ == '__main__':
 #     for video in get_videos_paths():

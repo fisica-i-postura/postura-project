@@ -1,14 +1,13 @@
-import json
 import os
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
 
 from constants.joints_ids_to_names import joints_to_track
-from globals.paths import PathHelper
+from globals.io.dataclasses import read_json_to_dataclass, write_dataclass_to_json
+from globals.io.paths import PathHelper
 from globals.video_analysis import VideoAnalysis
 from globals.video_metadata import VideoMetadata
 from kinematic.joints_to_kinematics_data import JointsToKinematicsData
@@ -16,7 +15,7 @@ from pendulum.model import Pendulum
 from pendulum.plot import plot_pendulum
 from plotting.graphics_visualization import plot_joint_kinematics
 from tracking.tracker import VideoInput, VideoTracker
-from globals.paths import get_videos_folder_path, get_csv_folder_path
+from globals.io.paths import get_videos_folder_path, get_csv_folder_path
 
 class Gender(Enum):
     MALE = 'M'
@@ -28,17 +27,6 @@ class UserInput:
     joints_distance_in_meters: float = 0.33
     subject_gender: Gender = Gender.MALE
     subject_weight: float = 85.0
-
-
-def read_json_to_dataclass(path: Path, cls: Any) -> Any:
-    with open(path, 'r') as file:
-        data = json.load(file)
-    return cls(**data)
-
-
-def write_dataclass_to_json(path: Path, obj: Any):
-    with open(path, 'w') as file:
-        json.dump(asdict(obj), file, indent=4)
 
 
 class PhysicsProcessor:

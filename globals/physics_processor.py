@@ -14,6 +14,7 @@ from kinematic.joints_to_kinematics_data import JointsToKinematicsData
 from pendulum.model import Pendulum
 from pendulum.plot import plot_pendulum
 from plotting.graphics_visualization import plot_joint_kinematics
+from plotting.kinematics_plots import KinematicsPlotHelper
 from tracking.tracker import VideoInput, VideoTracker
 
 
@@ -33,14 +34,14 @@ class UserInput:
 class PhysicsProcessor:
     def __init__(self, user_input: UserInput):
         self.user_input = user_input
+        self.path_helper = PathHelper(Path(user_input.video_path))
         self.video_metadata, self.video_raw_data = self._find_data_or_process()
-        self._create_plots_if_needed()
         self.video_analysis = VideoAnalysis(self.video_metadata, self.video_raw_data)
+        self._create_plots_if_needed()
 
     def _find_data_or_process(self) -> tuple[VideoMetadata, pd.DataFrame]:
-        path_helper = PathHelper(Path(self.user_input.video_path))
-        metadata_path = path_helper.get_metadata_path()
-        csv_path = path_helper.get_csv_path()
+        metadata_path = self.path_helper.get_metadata_path()
+        csv_path = self.path_helper.get_csv_path()
 
         if metadata_path.exists() and csv_path.exists():
             return read_json_to_dataclass(metadata_path, VideoMetadata), pd.read_csv(csv_path)
@@ -56,9 +57,16 @@ class PhysicsProcessor:
         video_metadata = VideoMetadata(video_input.path, video_output.fps, video_output.resolution, self.user_input.subject_gender.value, self.user_input.subject_weight, video_output.pixels_per_meter)
         return video_metadata, video_output.dataframe
 
-    @staticmethod
-    def _create_plots_if_needed():
-        process_kinematics_plots(build_kinematics_data())
+    def _create_plots_if_needed(self):
+        directory = self.path_helper.get_plots_folder_path()
+        if directory.exists() and directory.is_dir():
+            for file in directory.iterdir():
+                if file.is_file():
+                    file.unlink()
+
+        for joint_id, analysis in self.video_analysis.joints_analysis.items():
+            KinematicsPlotHelper(analysis.kinematics_data, analysis.joint_name, directory).plot()
+
         process_pendulum()
 
 
@@ -69,7 +77,7 @@ def build_kinematics_data() -> list[JointsToKinematicsData]:
 
 def process_kinematics_plots(joints_kinematics_data: list[JointsToKinematicsData]):
     for joints_kinematics in joints_kinematics_data:
-        joint_ids = joints_to_track.keys()
+        joint_ids = joints_to_track
         for joint_id in joint_ids:
             kinematics = joints_kinematics.get_joint(joint_id)
             plot_joint_kinematics(joint_id, kinematics, joints_kinematics.name)

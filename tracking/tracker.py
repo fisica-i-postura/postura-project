@@ -63,7 +63,7 @@ class VideoTracker:
             results = self.pose.process(frame_rgb)
 
             if results.pose_landmarks:
-                for joint_id in joints_to_track.keys():
+                for joint_id in joints_to_track:
                     joint = results.pose_landmarks.landmark[joint_id]
 
                     data.append({

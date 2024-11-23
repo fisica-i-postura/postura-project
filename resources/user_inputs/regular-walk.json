@@ -1,6 +1,6 @@
 {
     "video_path": "resources/videos/regular-walk.mp4",
     "joints_distance_in_meters": 0.33,
-    "subject_gender": "MALE",
+    "subject_gender": "M",
     "subject_weight": 85
 }

@@ -5,15 +5,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from constants.joints_ids_to_names import joints_to_track
 from globals.io.dataclasses import read_json_to_dataclass, write_dataclass_to_json
 from globals.io.paths import PathHelper, get_csv_folder_path
 from globals.video_analysis import VideoAnalysis
 from globals.video_metadata import VideoMetadata
-from kinematic.joints_to_kinematics_data import JointsToKinematicsData
 from pendulum.model import Pendulum
 from pendulum.plot import plot_pendulum
-from plotting.graphics_visualization import plot_joint_kinematics
 from plotting.kinematics_plots import KinematicsPlotHelper
 from tracking.tracker import VideoInput, VideoTracker
 
@@ -68,19 +65,6 @@ class PhysicsProcessor:
             KinematicsPlotHelper(analysis.kinematics_data, analysis.joint_name, directory).plot()
 
         process_pendulum()
-
-
-def build_kinematics_data() -> list[JointsToKinematicsData]:
-    paths = get_csv_paths()
-    return [JointsToKinematicsData(pd.read_csv(path), PathHelper(Path(path)).get_plots_folder_path().absolute()) for path in paths]
-
-
-def process_kinematics_plots(joints_kinematics_data: list[JointsToKinematicsData]):
-    for joints_kinematics in joints_kinematics_data:
-        joint_ids = joints_to_track
-        for joint_id in joint_ids:
-            kinematics = joints_kinematics.get_joint(joint_id)
-            plot_joint_kinematics(joint_id, kinematics, joints_kinematics.name)
 
 
 def process_pendulum():

@@ -47,7 +47,7 @@ class PathHelper:
     def get_plots_folder_path(self, create: bool = True) -> Path:
         folder = Path(f'{PLOTS}/{self.stem}')
         if create and not folder.exists():
-            folder.mkdir()
+            folder.mkdir(parents=True, exist_ok=True)
         return folder
 
     def get_metadata_path(self) -> Path:

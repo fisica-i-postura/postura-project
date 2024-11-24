@@ -25,7 +25,7 @@ def bulk_process_videos():
         p = PhysicsProcessor(user_input)
         jas = p.video_analysis.joints_analysis
         for joint_id, ja in jas.items():
-            KinematicsPlotHelper(ja.kinematics_data, ja.joint_name, path_helper.get_plots_folder_path()).plot()
+            KinematicsPlotHelper(ja.kinematics_data, ja.joint_name, path_helper.get_plots_folder_path(), p.video_analysis.steps).plot()
             pass
 
 

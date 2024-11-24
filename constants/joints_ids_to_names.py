@@ -16,6 +16,6 @@ class Joint(Enum):
     RIGHT_HIP = 24
     RIGHT_KNEE = 26
     # RIGHT_ANKLE = 28
-    # RIGHT_HEEL = 30
+    RIGHT_HEEL = 30
 
 joints_to_track = [joint.value for joint in Joint]

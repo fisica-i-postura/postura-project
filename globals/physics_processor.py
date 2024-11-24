@@ -62,7 +62,7 @@ class PhysicsProcessor:
                     file.unlink()
 
         for joint_id, analysis in self.video_analysis.joints_analysis.items():
-            KinematicsPlotHelper(analysis.kinematics_data, analysis.joint_name, directory).plot()
+            KinematicsPlotHelper(analysis.kinematics_data, analysis.joint_name, directory, self.video_analysis.steps).plot()
 
         process_pendulum()
 

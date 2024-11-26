@@ -1,3 +1,4 @@
+import numpy as np
 import scipy.constants as const
 
 from pendulum.solid_bar_pendulum import SolidBarPendulum
@@ -12,3 +13,5 @@ class Energy:
         self.kinetic_energy = self.translation_kinetic_energy + self.rotation_kinetic_energy
         self.potential_energy = self.pendulum.mass * const.g * self.pendulum.center_of_mass.y_position_smooth
         self.mechanical_energy = self.kinetic_energy + self.potential_energy
+        self.work = np.sum(np.diff(self.kinetic_energy))
+        self.non_conservative_forces_work = np.sum(np.diff(self.mechanical_energy))

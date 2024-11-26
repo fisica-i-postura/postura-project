@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from math import isnan
 
 import cv2
@@ -6,10 +7,17 @@ import numpy as np
 from drawings.draw_configs import DrawAxis
 from drawings.vectors import Vector
 
-Shape = Vector | None
 Point = tuple[int, int] | tuple[float, float]
 DrawablePoint = tuple[int, int]
 Color = tuple[int, int, int]
+
+@dataclass
+class Line:
+    p1: Point
+    p2: Point
+    label: str = ""
+
+Shape = Vector | None | Line
 
 TEXT_PADDING_PX = 25
 
@@ -26,6 +34,8 @@ class Cv2DrawUtils:
                 frame = self.draw_shape(frame, s, color, axis)
         elif isinstance(shape, Vector):
             self.draw_vector(frame, shape, color, axis)
+        elif isinstance(shape, Line):
+            self.draw_line(frame, shape, color)
         return frame
 
     def draw_vector(self, frame: np.ndarray, vector: Vector, color: Color, axis: DrawAxis|list[DrawAxis]) -> None:
@@ -50,8 +60,16 @@ class Cv2DrawUtils:
                 cv2.putText(frame, f'{py - y0:.2f} m', (x0 + TEXT_PADDING_PX, py + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, (x0, py), color, 2)
 
+    def draw_line(self, frame: np.ndarray, line: Line, color: Color) -> None:
+        p1 = self.to_cv2_point(line.p1)
+        p2 = self.to_cv2_point(line.p2)
+        cv2.line(frame, p1, p2, color, 2)
+        if line.label:
+            cv2.putText(frame, line.label, (p1[0] + TEXT_PADDING_PX, p1[1] + TEXT_PADDING_PX) , cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+
     def to_cv2_point(self, point: Point) -> DrawablePoint:
         x, y = point
         if isnan(x) or isnan(y):
             return 0, 0
         return int(x), int(self.video_height - y)
+

@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -6,13 +5,12 @@ from pathlib import Path
 import pandas as pd
 
 from globals.io.dataclasses import read_json_to_dataclass, write_dataclass_to_json
-from globals.io.paths import PathHelper, get_csv_folder_path
+from globals.io.paths import PathHelper
 from globals.video_analysis import VideoAnalysis
 from globals.video_metadata import VideoMetadata
-from pendulum.model import Pendulum
-from pendulum.plot import plot_pendulum
 from plotting.energy_plots import EnergyPlotHelper
 from plotting.kinematics_plots import KinematicsPlotHelper
+from plotting.pendulum_plots import PendulumPlotHelper
 from tracking.tracker import VideoInput, VideoTracker
 
 
@@ -70,7 +68,6 @@ class PhysicsProcessor:
         self.plot_pendulum_angle(directory)
         self.plot_energy(directory)
 
-        process_pendulum()
 
     def plot_kinematics(self, directory):
         for joint_id, analysis in self.video_analysis.joints_analysis.items():
@@ -78,22 +75,8 @@ class PhysicsProcessor:
                                  self.video_analysis.steps).plot()
 
     def plot_pendulum_angle(self, directory):
-        pass
+        PendulumPlotHelper(self.video_analysis.pendulum, self.video_analysis.steps, directory).plot()
 
     def plot_energy(self, directory):
         energy_data = self.video_analysis.energy_analysis
         EnergyPlotHelper(energy_data, self.video_analysis.steps, directory).plot()
-
-
-def process_pendulum():
-    for path in get_csv_paths():
-        pendulum = Pendulum(pd.read_csv(path))
-        plot_pendulum(pendulum, 'resources/plots/' + os.path.basename(path).split(".")[0] + '/pendulum.png')
-
-
-csv_dir = get_csv_folder_path()
-
-
-def get_csv_paths():
-    files = os.listdir(csv_dir)
-    return [os.path.join(csv_dir, file) for file in files]

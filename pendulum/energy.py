@@ -13,5 +13,7 @@ class Energy:
         self.kinetic_energy = self.translation_kinetic_energy + self.rotation_kinetic_energy
         self.potential_energy = self.pendulum.mass * const.g * self.pendulum.center_of_mass.y_position_smooth
         self.mechanical_energy = self.kinetic_energy + self.potential_energy
-        self.work = np.sum(np.diff(self.kinetic_energy))
-        self.non_conservative_forces_work = np.sum(np.diff(self.mechanical_energy))
+        self.work = np.diff(self.kinetic_energy)
+        self.total_work = np.nansum(self.work)
+        self.non_conservative_forces_work = np.diff(self.mechanical_energy)
+        self.total_non_conservative_forces_work = np.nansum(self.non_conservative_forces_work)

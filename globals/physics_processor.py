@@ -11,6 +11,7 @@ from globals.video_analysis import VideoAnalysis
 from globals.video_metadata import VideoMetadata
 from pendulum.model import Pendulum
 from pendulum.plot import plot_pendulum
+from plotting.energy_plots import EnergyPlotHelper
 from plotting.kinematics_plots import KinematicsPlotHelper
 from tracking.tracker import VideoInput, VideoTracker
 
@@ -26,6 +27,13 @@ class UserInput:
     joints_distance_in_meters: float = 0.33
     subject_gender: Gender = Gender.MALE
     subject_weight: float = 85.0
+
+
+def empty_dir(directory):
+    if directory.exists() and directory.is_dir():
+        for file in directory.iterdir():
+            if file.is_file():
+                file.unlink()
 
 
 class PhysicsProcessor:
@@ -56,15 +64,25 @@ class PhysicsProcessor:
 
     def _create_plots_if_needed(self):
         directory = self.path_helper.get_plots_folder_path()
-        if directory.exists() and directory.is_dir():
-            for file in directory.iterdir():
-                if file.is_file():
-                    file.unlink()
+        empty_dir(directory)
 
-        for joint_id, analysis in self.video_analysis.joints_analysis.items():
-            KinematicsPlotHelper(analysis.kinematics_data, analysis.joint_name, directory, self.video_analysis.steps).plot()
+        self.plot_kinematics(directory)
+        self.plot_pendulum_angle(directory)
+        self.plot_energy(directory)
 
         process_pendulum()
+
+    def plot_kinematics(self, directory):
+        for joint_id, analysis in self.video_analysis.joints_analysis.items():
+            KinematicsPlotHelper(analysis.kinematics_data, analysis.joint_name, directory,
+                                 self.video_analysis.steps).plot()
+
+    def plot_pendulum_angle(self, directory):
+        pass
+
+    def plot_energy(self, directory):
+        energy_data = self.video_analysis.energy_analysis
+        EnergyPlotHelper(energy_data, self.video_analysis.steps, directory).plot()
 
 
 def process_pendulum():

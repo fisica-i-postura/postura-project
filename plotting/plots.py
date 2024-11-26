@@ -9,8 +9,9 @@ def plot_helper(x: np.ndarray, ys: list[np.ndarray], names:list[str], title: str
         for step in steps:
             fig.add_shape(
                 type="line",
-                x0=x[step], y0=min(y),
-                x1=x[step], y1=max(y),
+                x0=x[step], y0=0,
+                x1=x[step], y1=1,
+                xref="x", yref="paper",
                 line=dict(color="green", width=2, dash="dash")
             )
     fig.update_layout(title=title, xaxis_title=x_label, yaxis_title=y_label)

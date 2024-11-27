@@ -22,3 +22,4 @@ class JointDrawConfig:
     draw_type: DrawType
     draw_axis: DrawAxis
     color: Color
+    trace: bool = False

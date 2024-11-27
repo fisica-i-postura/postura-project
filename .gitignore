@@ -6,3 +6,6 @@
 *lib
 *share
 /resources/videos/
+/resources/csv/
+/resources/plots/
+/resources/processed_videos/

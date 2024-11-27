@@ -41,7 +41,7 @@ class VideoPlayer(tk.Tk):
         self.current_frame_data = None  # Almacena el frame actual   
 
         
-        # Definir colores como variables de clase
+        # Definir colores como variables de clas
         self.bg_color = '#1a2639'  # Azul marino
         self.button_color = '#3d5a80'  # Azul más claro para botones
         self.text_color = 'white'

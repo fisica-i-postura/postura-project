@@ -42,8 +42,13 @@ class VideoAnalysis:
             self.joints_analysis[Joint.RIGHT_SHOULDER.value].kinematics_data,
             self.joints_analysis[Joint.RIGHT_ELBOW.value].kinematics_data,
             self.joints_analysis[Joint.RIGHT_WRIST.value].kinematics_data,
-            self.video_metadata.subject_mass,
+            self.calculate_full_arm_mass(),
         )
+
+    def calculate_full_arm_mass(self):
+        mass = self.video_metadata.subject_mass
+        idx = 0 if self.video_metadata.subject_gender == Gender.MALE else 1
+        return mass * (BodyWeightPercentage.UPPER_ARM.value[idx] + BodyWeightPercentage.FOREARM.value[idx] + BodyWeightPercentage.HAND.value[idx])
 
     def build_energy_data(self):
         self.energy_analysis = Energy(self.pendulum)

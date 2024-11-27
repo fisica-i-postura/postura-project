@@ -2,7 +2,7 @@ import numpy as np
 
 from drawings.cv2_draw_utils import Shape, Cv2DrawUtils, Line, Point
 from drawings.draw_configs import DrawType, JointDrawConfig
-from drawings.vectors import KinematicsVectors
+from drawings.vectors import KinematicsVectors, Vector
 from globals.video_analysis import VideoAnalysis
 
 
@@ -16,6 +16,21 @@ def get_shape(kinematic_vectors: KinematicsVectors, draw_type: DrawType, frame_i
             return kinematic_vectors.acceleration_vectors[frame_idx]
 
 
+def get_trace_data(kinematic_vectors: KinematicsVectors, draw_type: DrawType) -> list[Vector]:
+    match draw_type:
+        case DrawType.POSITION:
+            return kinematic_vectors.position_vectors
+        case DrawType.VELOCITY:
+            return kinematic_vectors.velocity_vectors
+        case DrawType.ACCELERATION:
+            return kinematic_vectors.acceleration_vectors
+
+
+def get_trace_points(kinematic_vectors: KinematicsVectors, draw_type: DrawType, frame_idx: int) -> list[Point]:
+    vectors = get_trace_data(kinematic_vectors, draw_type)[:frame_idx + 1]
+    return [v.translation for v in vectors]
+
+
 class DrawHelper:
     def __init__(self, video_analysis: VideoAnalysis, joint_draw_configs: list[JointDrawConfig]) -> None:
         self.video_analysis = video_analysis
@@ -26,9 +41,14 @@ class DrawHelper:
 
     def draw(self, frame: np.ndarray, frame_idx: int):
         for joint_draw_config in self.joint_draw_configs:
-            joint_analysis = self.joints_analysis[joint_draw_config.joint_id].kinematics_vectors
-            shape = get_shape(joint_analysis, joint_draw_config.draw_type, frame_idx)
+            joint_analysis = self.joints_analysis[joint_draw_config.joint_id]
+            kinematic_vectors = joint_analysis.kinematics_vectors
+            shape = get_shape(kinematic_vectors, joint_draw_config.draw_type, frame_idx)
             self.cv2_draw_util.draw_vector(frame, shape, joint_draw_config.color, joint_draw_config.draw_axis)
+            if joint_draw_config.trace:
+                trace_points = get_trace_points(kinematic_vectors, joint_draw_config.draw_type, frame_idx)
+                self.cv2_draw_util.draw_shape(frame, trace_points, joint_draw_config.color, [])
+
 
     def draw_pendulum_angle(self, frame: np.ndarray, frame_idx: int):
         pendulum = self.video_analysis.pendulum

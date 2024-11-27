@@ -22,7 +22,7 @@ class VideoAnalysis:
         self.video_metadata = video_metadata
         self.joints_raw_data = joints_raw_data
         self.joints_analysis: dict[int, JointAnalysis] = {}
-        self.pendulum = None
+        self.pendulum: None | SolidBarPendulum = None
         self.energy_analysis = None
         self.steps = None
         self.analyse()

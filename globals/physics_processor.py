@@ -1,30 +1,16 @@
-from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
 
 import pandas as pd
 
 from globals.io.dataclasses import read_json_to_dataclass, write_dataclass_to_json
 from globals.io.paths import PathHelper
+from globals.user_input import UserInput
 from globals.video_analysis import VideoAnalysis
 from globals.video_metadata import VideoMetadata
 from plotting.energy_plots import EnergyPlotHelper
 from plotting.kinematics_plots import KinematicsPlotHelper
 from plotting.pendulum_plots import PendulumPlotHelper
 from tracking.tracker import VideoInput, VideoTracker
-
-
-class Gender(Enum):
-    MALE = 'M'
-    FEMALE = 'F'
-
-
-@dataclass
-class UserInput:
-    video_path: str
-    joints_distance_in_meters: float = 0.33
-    subject_gender: Gender = Gender.MALE
-    subject_weight: float = 85.0
 
 
 def empty_dir(directory):

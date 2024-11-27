@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 
 from globals.io.paths import get_videos_folder_path, PathHelper
-from globals.physics_processor import PhysicsProcessor, UserInput, Gender
+from globals.physics_processor import PhysicsProcessor
+from globals.user_input import Gender, UserInput
 from globals.io.dataclasses import read_json_to_dataclass
 from plotting.kinematics_plots import KinematicsPlotHelper
 

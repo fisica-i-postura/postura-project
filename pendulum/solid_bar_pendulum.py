@@ -10,19 +10,6 @@ def get_angle_np(fixed_points: np.ndarray, moving_points: np.ndarray) -> np.ndar
     return np.arctan2(xs_diff, -ys_diff)
 
 
-class SolidBarPendulumDeprecated:
-    def __init__(self, pivot: np.ndarray, center_of_mass: np.ndarray, solid_bar_end: np.ndarray, mass: float):
-        self.pivot = pivot
-        self.center_of_mass = center_of_mass
-        self.length = solid_bar_end
-        self.mass = mass
-        self.angle = get_angle_np(pivot, solid_bar_end)
-        self.center_of_mass_to_pivot_distance = np.linalg.norm(pivot - center_of_mass)
-        self.moment_of_inertia = mass * self.center_of_mass_to_pivot_distance**2 / 3
-        self.angular_frequency = (mass * const.g * self.center_of_mass_to_pivot_distance / self.moment_of_inertia) ** 0.5
-        self.period = 2 * const.pi / self.angular_frequency
-
-
 class SolidBarPendulum:
     def __init__(self, pivot: JointKinematics, center_of_mass: JointKinematics, solid_bar_end: JointKinematics, mass: float):
         self.pivot = pivot

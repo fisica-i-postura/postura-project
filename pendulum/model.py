@@ -40,7 +40,7 @@ class Pendulum:
         # Parámetros físicos
         self.mass = mass
         self.distance = distance
-        self.inertia = inertia
+        self.inertia = inertia * mass * (distance * distance)
 
         # Frecuencia angular
         self.angular_frequency = self.calculate_angular_frequency()

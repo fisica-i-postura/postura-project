@@ -1,6 +1,6 @@
 from pathlib import Path
 
-ROOT = '/Users/ijdotta/UNS/fisica-i/postura-project'
+ROOT = '../postura-project'
 RESOURCES = f'{ROOT}/resources'
 USER_INPUTS = f'{RESOURCES}/user_inputs'
 VIDEOS = f'{RESOURCES}/videos'

@@ -1,0 +1,11 @@
+{
+    "path": "..\\postura-project\\resources\\videos\\regular-walk.mov",
+    "fps": 55.665867853474836,
+    "resolution": [
+        1920,
+        1080
+    ],
+    "subject_gender": "M",
+    "subject_mass": 85,
+    "pixels_per_meter": 505.313054189676
+}

@@ -4,8 +4,6 @@ import cv2
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from PIL import Image, ImageTk
-from threading import Thread
-import os
 
 from drawings.colors import Color
 from drawings.draw_configs import JointDrawConfig, DrawType, DrawAxis

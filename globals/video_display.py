@@ -17,7 +17,7 @@ def get_draw_configs() -> list[JointDrawConfig]:
     ]
 
 
-def display(video_path: str, video_analysis: VideoAnalysis, joints_to_track: dict[int, str]|None) -> None:
+def display(video_path: str, video_analysis: VideoAnalysis) -> None:
     cap = cv2.VideoCapture(video_path)
 
     # Verificar si el video se pudo abrir
@@ -33,7 +33,8 @@ def display(video_path: str, video_analysis: VideoAnalysis, joints_to_track: dic
         if not ret:
             break
 
-        draw_helper.draw(frame, frame_idx)
+        # draw_helper.draw(frame, frame_idx)
+        draw_helper.draw_pendulum_angle(frame, frame_idx)
         cv2.imshow('Video', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

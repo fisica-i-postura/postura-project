@@ -5,7 +5,7 @@ from kinematic.joints_to_kinematics_data import JointsToKinematicsData
 from constants.joints_ids_to_names import joints_to_track
 from plotting.graphics_visualization import plot_joint_kinematics
 from pendulum.model import Pendulum
-from pendulum.plot import plot_and_fit_periods
+from pendulum.plot import plot_pendulum
 
 videos_dir = './resources/videos'
 def get_videos_paths():
@@ -45,7 +45,7 @@ def process_kinematics_plots(joints_kinematics_data: list[JointsToKinematicsData
 def process_pendulum():
     for path in get_csv_paths():
         pendulum = Pendulum(pd.read_csv(path),5.95,0.33,1/3)
-        plot_and_fit_periods(pendulum, 'resources/plots/' + os.path.basename(path).split(".")[0] + '/pendulum.png')
+        plot_pendulum(pendulum, 'resources/plots/' + os.path.basename(path).split(".")[0] + '/pendulum.png')
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ class Line:
     p2: Point
     label: str = ""
 
-Shape = Vector | None | Line
+Shape = Vector | Line | Point | None
 
 TEXT_PADDING_PX = 25
 
@@ -36,6 +36,8 @@ class Cv2DrawUtils:
             self.draw_vector(frame, shape, color, axis)
         elif isinstance(shape, Line):
             self.draw_line(frame, shape, color)
+        elif isinstance(shape, tuple) and all(isinstance(p, (int, float)) for p in shape):
+            self.draw_line(frame, Line(shape, shape), color, 10)
         return frame
 
     def draw_vector(self, frame: np.ndarray, vector: Vector, color: Color, axis: DrawAxis|list[DrawAxis]) -> None:
@@ -60,10 +62,10 @@ class Cv2DrawUtils:
                 cv2.putText(frame, f'{py - y0:.2f} m', (x0 + TEXT_PADDING_PX, py + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, (x0, py), color, 2)
 
-    def draw_line(self, frame: np.ndarray, line: Line, color: Color) -> None:
+    def draw_line(self, frame: np.ndarray, line: Line, color: Color, thickness = 2) -> None:
         p1 = self.to_cv2_point(line.p1)
         p2 = self.to_cv2_point(line.p2)
-        cv2.line(frame, p1, p2, color, 2)
+        cv2.line(frame, p1, p2, color, thickness)
         if line.label:
             cv2.putText(frame, line.label, (p1[0] + TEXT_PADDING_PX, p1[1] + TEXT_PADDING_PX) , cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
 

@@ -4,8 +4,9 @@ from kinematic.dataset_smoothing import smooth
 from constants.df_columns_names import SECOND, X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, VISIBILITY
 
 class JointKinematics:
-    def __init__(self, joint_df: pd.DataFrame) -> None:
+    def __init__(self, joint_df: pd.DataFrame, name: str = "unknown") -> None:
         """Models the kinematics datasets for a given joint"""
+        self.name = name
         self.t = joint_df[SECOND].to_numpy()
         self.x_position = joint_df[X_POSITION_ABSOLUTE].to_numpy()
         self.y_position = joint_df[Y_POSITION_ABSOLUTE].to_numpy()

@@ -1,6 +1,6 @@
 import numpy as np
 
-from drawings.cv2_draw_utils import Shape, Cv2DrawUtils, Line, Color
+from drawings.cv2_draw_utils import Shape, Cv2DrawUtils, Line, Point
 from drawings.draw_configs import DrawType, JointDrawConfig
 from drawings.vectors import KinematicsVectors
 from globals.video_analysis import VideoAnalysis
@@ -19,6 +19,7 @@ def get_shape(kinematic_vectors: KinematicsVectors, draw_type: DrawType, frame_i
 class DrawHelper:
     def __init__(self, video_analysis: VideoAnalysis, joint_draw_configs: list[JointDrawConfig]) -> None:
         self.video_analysis = video_analysis
+        self.pixel_per_meter = video_analysis.video_metadata.pixels_per_meter
         self.joints_analysis = video_analysis.joints_analysis
         self.joint_draw_configs = joint_draw_configs
         self.cv2_draw_util = Cv2DrawUtils(video_analysis.video_metadata.resolution[1])
@@ -32,8 +33,8 @@ class DrawHelper:
     def draw_pendulum_angle(self, frame: np.ndarray, frame_idx: int):
         pendulum = self.video_analysis.pendulum
         angle = np.degrees(np.arctan(np.tan(pendulum.angle[frame_idx])))
-        pivot = (pendulum.pivot.x_position_smooth[frame_idx], pendulum.pivot.y_position_smooth[frame_idx])
-        center_of_mass = (pendulum.center_of_mass.x_position_smooth[frame_idx], pendulum.center_of_mass.y_position_smooth[frame_idx])
-        arm_line = Line(pivot, center_of_mass, f'{angle:.2f}°')
+        pivot: Point = (pendulum.pivot.x_position_smooth[frame_idx] * self.pixel_per_meter, pendulum.pivot.y_position_smooth[frame_idx] * self.pixel_per_meter)
+        center_of_mass: Point = (pendulum.center_of_mass.x_position_smooth[frame_idx] * self.pixel_per_meter, pendulum.center_of_mass.y_position_smooth[frame_idx] * self.pixel_per_meter)
+        arm_line = Line(pivot, center_of_mass, f'{angle:.2f} deg')
         vertical_line = Line(pivot, (pivot[0], 0))
-        self.cv2_draw_util.draw_shape(frame, [arm_line, vertical_line], Color.GREEN.value, [])
+        self.cv2_draw_util.draw_shape(frame, [arm_line, vertical_line], (255, 0, 0), [])

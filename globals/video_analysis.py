@@ -2,7 +2,9 @@ import pandas as pd
 
 from constants.df_columns_names import JOINT_ID
 from constants.joints_ids_to_names import get_joint_name, Joint
+from constants.weights_percentages import BodyWeightPercentage
 from drawings.vectors import KinematicsVectors
+from globals.user_input import Gender
 from globals.video_metadata import VideoMetadata
 from kinematic.joint_kinematics import JointKinematics
 from kinematic.steps import StepsCalculator

@@ -38,3 +38,4 @@ class DrawHelper:
         arm_line = Line(pivot, center_of_mass, f'{angle:.2f} deg')
         vertical_line = Line(pivot, (pivot[0], 0))
         self.cv2_draw_util.draw_shape(frame, [arm_line, vertical_line], (255, 0, 0), [])
+        self.cv2_draw_util.draw_shape(frame, [pivot, center_of_mass], (0, 0, 255), [])

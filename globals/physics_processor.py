@@ -43,7 +43,7 @@ class PhysicsProcessor:
     def _process_video(self) -> tuple[VideoMetadata, pd.DataFrame]:
         video_input = VideoInput(self.user_input.video_path, 12, 14, self.user_input.joints_distance_in_meters)
         video_output = VideoTracker(video_input).process()
-        video_metadata = VideoMetadata(video_input.path, video_output.fps, video_output.resolution, self.user_input.subject_gender.value, self.user_input.subject_weight, video_output.pixels_per_meter)
+        video_metadata = VideoMetadata(video_input.path, video_output.fps, video_output.resolution, self.user_input.subject_gender, self.user_input.subject_weight, video_output.pixels_per_meter)
         return video_metadata, video_output.dataframe
 
     def _create_plots_if_needed(self):

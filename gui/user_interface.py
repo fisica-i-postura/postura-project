@@ -8,15 +8,17 @@ from PIL import Image, ImageTk
 from drawings.colors import Color
 from drawings.draw_configs import JointDrawConfig, DrawType, DrawAxis
 from drawings.draw_helper import DrawHelper
+import matplotlib.pyplot as plt
+from constants.joints_ids_to_names import joints_to_track
 
 def get_draw_configs() -> list[JointDrawConfig]:
     return [
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value,trace=True),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value,trace=True),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value,trace=True),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value,trace=True),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value,trace=True),
+        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value,trace=True),
     ]
 
 def x(joints: list[int], types: list[DrawType], axes: list[DrawAxis]) -> list[JointDrawConfig]:
@@ -36,8 +38,14 @@ class VideoPlayer(tk.Tk):
         self.video_analysis = None
         self.draw_helper = None
         self.show_vectors = False
-        self.current_frame_data = None  # Almacena el frame actual   
+        self.current_frame_data = None  # Almacena el frame actual  
+        self.width = 853
+        self.height = 480 
+        self.fullscreen_graph = False
 
+        joints_to_track.clear()
+
+        joints_to_track.append()
         
         # Definir colores como variables de clas
         self.bg_color = '#1a2639'  # Azul marino
@@ -47,17 +55,18 @@ class VideoPlayer(tk.Tk):
         # Configurar el color de fondo de la ventana principal
         self.configure(bg=self.bg_color)
         
-        # Estilo para los combobox
+        # Configuración de la interfaz gráfica
+        self.configure(bg=self.bg_color)
         style = ttk.Style()
         style.configure('Custom.TCombobox', 
-                       fieldbackground=self.button_color,
-                       background=self.button_color,
-                       foreground=self.text_color,
-                       selectbackground=self.button_color,
-                       selectforeground=self.text_color,
-                       padding=5)
-        
-        # Frame principal
+                        fieldbackground=self.button_color,
+                        background=self.button_color,
+                        foreground=self.text_color,
+                        selectbackground=self.button_color,
+                        selectforeground=self.text_color,
+                        padding=5)
+
+        # Restante inicialización del layout
         self.main_frame = tk.Frame(self, bg=self.bg_color)
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -95,8 +104,8 @@ class VideoPlayer(tk.Tk):
 
         # Canvas para el video
         self.video_canvas = tk.Canvas(self.video_frame, 
-                                    width=1280, 
-                                    height=720,
+                                    width=self.width, 
+                                    height=self.height,
                                     bg='black',
                                     highlightthickness=0)
         self.video_canvas.pack(pady=10)
@@ -159,10 +168,11 @@ class VideoPlayer(tk.Tk):
         self.graphs_menu1.bind("<<ComboboxSelected>>", 
                              lambda e: self.update_graph(e, 1))
 
-        # Canvas para el primer gráfico
-        self.fig1, self.ax1 = plt.subplots(figsize=(6, 4))
+        #### Canvas para el primer gráfico
+        self.fig1, self.ax1 = plt.subplots(figsize=(8, 6))
         self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.graph1_frame)
         self.canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
+        self.canvas1.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(1))
 
         # Frame para el segundo gráfico
         self.graph2_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
@@ -177,10 +187,11 @@ class VideoPlayer(tk.Tk):
         self.graphs_menu2.bind("<<ComboboxSelected>>", 
                              lambda e: self.update_graph(e, 2))
 
-        # Canvas para el segundo gráfico
-        self.fig2, self.ax2 = plt.subplots(figsize=(6, 4))
+        #### Canvas para el segundo gráfico
+        self.fig2, self.ax2 = plt.subplots(figsize=(8, 6))
         self.canvas2 = FigureCanvasTkAgg(self.fig2, master=self.graph2_frame)
         self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
+        self.canvas2.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(2))
 
     def round_button(self, button):
         """Aplica estilo redondeado a los botones"""
@@ -192,10 +203,13 @@ class VideoPlayer(tk.Tk):
     def load_video(self):
         self.video_path = filedialog.askopenfilename()
         if self.video_path:
-            self.on_video_selected(self.video_path)
+            # Llamar a la función proporcionada para procesar el video
+            if hasattr(self, 'on_video_selected'):
+                self.on_video_selected(self.video_path)
+
 
     def plot_data(self, figures_paths):
-        self.figures_paths = figures_paths
+        self.figures_paths = [str(path) for path in figures_paths]  # Convertir Path a str
         # Configurar ambos menús desplegables con las mismas opciones
         self.graphs_menu1["values"] = self.figures_paths
         self.graphs_menu2["values"] = self.figures_paths
@@ -207,24 +221,103 @@ class VideoPlayer(tk.Tk):
             self.display_graph(self.figures_paths[0], 1)
             self.display_graph(self.figures_paths[min(1, len(self.figures_paths) - 1)], 2)
 
+
     def update_graph(self, event, graph_number):
         selected_graph = self.graphs_menu1.get() if graph_number == 1 else self.graphs_menu2.get()
         if selected_graph:
             self.display_graph(selected_graph, graph_number)
 
     def display_graph(self, graph_path, graph_number):
+        ax = self.ax1 if graph_number == 1 else self.ax2
+        canvas = self.canvas1 if graph_number == 1 else self.canvas2
+
+        ax.clear()
+        img = plt.imread(graph_path)
+        ax.imshow(img)
+        ax.axis('off')
+        canvas.draw()
+
+    def expand_graph(self, graph_number):
+        """Expand the selected graph to full screen with a more robust approach."""
+        # If already in fullscreen, restore original layout
+        if self.fullscreen_graph:
+            self.restore_layout()
+            return
+
+        # Set fullscreen flag
+        self.fullscreen_graph = True
+
+        # Determine which graph to expand
         if graph_number == 1:
-            self.ax1.clear()
-            img = plt.imread(graph_path)
-            self.ax1.imshow(img)
-            self.ax1.axis('off')
-            self.canvas1.draw()
+            source_fig = self.fig1
+            source_path = self.graphs_menu1.get()
         else:
-            self.ax2.clear()
-            img = plt.imread(graph_path)
-            self.ax2.imshow(img)
-            self.ax2.axis('off')
-            self.canvas2.draw()
+            source_fig = self.fig2
+            source_path = self.graphs_menu2.get()
+
+        # Hide the main frame
+        self.main_frame.pack_forget()
+
+        # Create a new fullscreen frame
+        self.fullscreen_frame = tk.Frame(self, bg=self.bg_color)
+        self.fullscreen_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Create a new figure with the same size as the screen
+        fullscreen_fig, fullscreen_ax = plt.subplots(figsize=(16, 9), dpi=100)
+        fullscreen_canvas = FigureCanvasTkAgg(fullscreen_fig, master=self.fullscreen_frame)
+        fullscreen_canvas_widget = fullscreen_canvas.get_tk_widget()
+        fullscreen_canvas_widget.pack(fill=tk.BOTH, expand=True)
+
+        # Load and display the image
+        img = plt.imread(source_path)
+        fullscreen_ax.clear()
+        fullscreen_ax.imshow(img)
+        fullscreen_ax.axis('off')
+        fullscreen_fig.tight_layout(pad=0)
+        fullscreen_canvas.draw()
+
+        # Add a return button
+        return_button = tk.Button(
+            self.fullscreen_frame, 
+            text="Volver", 
+            command=self.restore_layout,
+            bg=self.button_color, 
+            fg=self.text_color, 
+            relief='raised', 
+            borderwidth=0,
+            padx=20, 
+            pady=10
+        )
+        return_button.pack(side=tk.BOTTOM, pady=10)
+
+    def restore_layout(self):
+        """Restore the original layout after fullscreen."""
+        # Destroy the fullscreen frame if it exists
+        if hasattr(self, 'fullscreen_frame'):
+            self.fullscreen_frame.destroy()
+            del self.fullscreen_frame
+
+        # Reset fullscreen flag
+        self.fullscreen_graph = False
+
+        # Restore the main frame
+        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Redraw original graphs to ensure they're displayed correctly
+        if self.figures_paths:
+            # Redisplay graphs from the original paths
+            first_graph = self.figures_paths[0]
+            second_graph = self.figures_paths[min(1, len(self.figures_paths) - 1)]
+            
+            self.display_graph(first_graph, 1)
+            self.display_graph(second_graph, 2)
+
+    def clear_layout(self):
+        """Oculta temporalmente todos los elementos de la ventana."""
+        for widget in self.main_frame.winfo_children():
+            widget.pack_forget()
+
+    
 
     def show_processed_video(self, video_path):
         self.cap = cv2.VideoCapture(video_path)
@@ -311,7 +404,7 @@ class VideoPlayer(tk.Tk):
         """Muestra el frame en el canvas"""
         if frame is not None:
             img = Image.fromarray(frame)
-            img = img.resize((1280, 720), Image.LANCZOS)
+            img = img.resize((self.width, self.height), Image.LANCZOS)
             img_tk = ImageTk.PhotoImage(img)
             self.video_canvas.create_image(0, 0, anchor=tk.NW, image=img_tk)
             self.current_image = img_tk
@@ -333,5 +426,3 @@ class VideoPlayer(tk.Tk):
         frame = self.draw_vectors_on_frame(frame)
         self.display_frame(frame)
         return True        
-
-    #853x480

@@ -9,6 +9,7 @@ from drawings.colors import Color
 from drawings.draw_configs import JointDrawConfig, DrawType, DrawAxis
 from drawings.draw_helper import DrawHelper
 import matplotlib.pyplot as plt
+from constants.joints_ids_to_names import joints_to_track
 
 def get_draw_configs() -> list[JointDrawConfig]:
     return [
@@ -42,6 +43,9 @@ class VideoPlayer(tk.Tk):
         self.height = 480 
         self.fullscreen_graph = False
 
+        joints_to_track.clear()
+
+        joints_to_track.append()
         
         # Definir colores como variables de clas
         self.bg_color = '#1a2639'  # Azul marino

@@ -43,9 +43,9 @@ class VideoPlayer(tk.Tk):
         self.height = 480 
         self.fullscreen_graph = False
 
-        joints_to_track.clear()
+        #joints_to_track.clear()
 
-        joints_to_track.append()
+        #joints_to_track.append()
         
         # Definir colores como variables de clas
         self.bg_color = '#1a2639'  # Azul marino
@@ -174,24 +174,24 @@ class VideoPlayer(tk.Tk):
         self.canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
         self.canvas1.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(1))
 
-        # Frame para el segundo gráfico
-        self.graph2_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
-        self.graph2_frame.pack(fill=tk.BOTH, expand=True)
+        # # Frame para el segundo gráfico
+        # self.graph2_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
+        # self.graph2_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Menú desplegable para el segundo gráfico
-        self.graphs_menu2 = ttk.Combobox(self.graph2_frame, 
-                                        state="readonly",
-                                        style='Custom.TCombobox',
-                                        width=40)
-        self.graphs_menu2.pack(pady=10)
-        self.graphs_menu2.bind("<<ComboboxSelected>>", 
-                             lambda e: self.update_graph(e, 2))
+        # # Menú desplegable para el segundo gráfico
+        # self.graphs_menu2 = ttk.Combobox(self.graph2_frame, 
+        #                                 state="readonly",
+        #                                 style='Custom.TCombobox',
+        #                                 width=40)
+        # self.graphs_menu2.pack(pady=10)
+        # self.graphs_menu2.bind("<<ComboboxSelected>>", 
+        #                      lambda e: self.update_graph(e, 2))
 
-        #### Canvas para el segundo gráfico
-        self.fig2, self.ax2 = plt.subplots(figsize=(8, 6))
-        self.canvas2 = FigureCanvasTkAgg(self.fig2, master=self.graph2_frame)
-        self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
-        self.canvas2.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(2))
+        # #### Canvas para el segundo gráfico
+        # self.fig2, self.ax2 = plt.subplots(figsize=(8, 6))
+        # self.canvas2 = FigureCanvasTkAgg(self.fig2, master=self.graph2_frame)
+        # self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
+        # self.canvas2.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(2))
 
     def round_button(self, button):
         """Aplica estilo redondeado a los botones"""
@@ -212,24 +212,24 @@ class VideoPlayer(tk.Tk):
         self.figures_paths = [str(path) for path in figures_paths]  # Convertir Path a str
         # Configurar ambos menús desplegables con las mismas opciones
         self.graphs_menu1["values"] = self.figures_paths
-        self.graphs_menu2["values"] = self.figures_paths
+        #self.graphs_menu2["values"] = self.figures_paths
         
         if self.figures_paths:
             # Establecer valores iniciales diferentes para cada gráfico
             self.graphs_menu1.current(0)
-            self.graphs_menu2.current(min(1, len(self.figures_paths) - 1))
+            #self.graphs_menu2.current(min(1, len(self.figures_paths) - 1))
             self.display_graph(self.figures_paths[0], 1)
             self.display_graph(self.figures_paths[min(1, len(self.figures_paths) - 1)], 2)
 
 
     def update_graph(self, event, graph_number):
-        selected_graph = self.graphs_menu1.get() if graph_number == 1 else self.graphs_menu2.get()
+        selected_graph = self.graphs_menu1.get() #if graph_number == 1 else self.graphs_menu2.get()
         if selected_graph:
             self.display_graph(selected_graph, graph_number)
 
     def display_graph(self, graph_path, graph_number):
-        ax = self.ax1 if graph_number == 1 else self.ax2
-        canvas = self.canvas1 if graph_number == 1 else self.canvas2
+        ax = self.ax1 #if graph_number == 1 else self.ax2
+        canvas = self.canvas1 #if graph_number == 1 else self.canvas2
 
         ax.clear()
         img = plt.imread(graph_path)
@@ -251,9 +251,9 @@ class VideoPlayer(tk.Tk):
         if graph_number == 1:
             source_fig = self.fig1
             source_path = self.graphs_menu1.get()
-        else:
-            source_fig = self.fig2
-            source_path = self.graphs_menu2.get()
+        # else:
+        #     source_fig = self.fig2
+        #     source_path = self.graphs_menu2.get()
 
         # Hide the main frame
         self.main_frame.pack_forget()

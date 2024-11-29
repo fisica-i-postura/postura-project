@@ -1,3 +1,4 @@
+from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, ttk
 import cv2
@@ -10,6 +11,7 @@ from drawings.draw_configs import JointDrawConfig, DrawType, DrawAxis
 from drawings.draw_helper import DrawHelper
 import matplotlib.pyplot as plt
 from constants.joints_ids_to_names import joints_to_track
+import webview
 
 def get_draw_configs() -> list[JointDrawConfig]:
     return [
@@ -151,47 +153,103 @@ class VideoPlayer(tk.Tk):
                                highlightthickness=0)
         self.progress.pack(fill=tk.X, expand=True, padx=10)
 
-        # Frame para gráficos (derecha)
+
+
+
+######################################################################
+
+         # Frame para gráficos (derecha)
         self.graph_frame = tk.Frame(self.main_frame, bg=self.bg_color)
         self.graph_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        # Frame para el primer gráfico
-        self.graph1_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
-        self.graph1_frame.pack(fill=tk.BOTH, expand=True)
+        # Frame para selección de gráficos
+        self.graph_selection_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
+        self.graph_selection_frame.pack(fill=tk.X, pady=10)
 
-        # Menú desplegable para el primer gráfico
-        self.graphs_menu1 = ttk.Combobox(self.graph1_frame, 
-                                        state="readonly",
-                                        style='Custom.TCombobox',
-                                        width=40)
-        self.graphs_menu1.pack(pady=10)
-        self.graphs_menu1.bind("<<ComboboxSelected>>", 
-                             lambda e: self.update_graph(e, 1))
+        # Etiqueta para selector de gráficos
+        self.graph_label = tk.Label(self.graph_selection_frame, 
+                                    text="Seleccionar Gráfico:", 
+                                    bg=self.bg_color, 
+                                    fg=self.text_color)
+        self.graph_label.pack(side=tk.LEFT, padx=10)
 
-        #### Canvas para el primer gráfico
-        self.fig1, self.ax1 = plt.subplots(figsize=(8, 6))
-        self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.graph1_frame)
-        self.canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
-        self.canvas1.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(1))
+        # Combobox para seleccionar gráficos
+        self.graph_combobox = ttk.Combobox(self.graph_selection_frame, 
+                                           state="readonly", 
+                                           style='Custom.TCombobox')
+        self.graph_combobox.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=10)
+        self.graph_combobox.bind('<<ComboboxSelected>>', self.update_graph)
 
-        # # Frame para el segundo gráfico
-        # self.graph2_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
-        # self.graph2_frame.pack(fill=tk.BOTH, expand=True)
+        # Frame para imagen de gráfico
+        self.image_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
+        self.image_frame.pack(fill=tk.BOTH, expand=True)
 
-        # # Menú desplegable para el segundo gráfico
-        # self.graphs_menu2 = ttk.Combobox(self.graph2_frame, 
-        #                                 state="readonly",
-        #                                 style='Custom.TCombobox',
-        #                                 width=40)
-        # self.graphs_menu2.pack(pady=10)
-        # self.graphs_menu2.bind("<<ComboboxSelected>>", 
-        #                      lambda e: self.update_graph(e, 2))
+        # Label para mostrar gráfico PNG
+        self.graph_image_label = tk.Label(self.image_frame, bg=self.bg_color)
+        self.graph_image_label.pack(pady=10, expand=True)
 
-        # #### Canvas para el segundo gráfico
-        # self.fig2, self.ax2 = plt.subplots(figsize=(8, 6))
-        # self.canvas2 = FigureCanvasTkAgg(self.fig2, master=self.graph2_frame)
-        # self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
-        # self.canvas2.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(2))
+        # Botón para expandir gráfico HTML
+        self.expand_button = tk.Button(self.graph_frame, 
+                                       text="Expandir", 
+                                       command=self.expand_graph,
+                                       bg=self.button_color, 
+                                       fg=self.text_color,
+                                       relief='raised', 
+                                       borderwidth=0, 
+                                       padx=20, 
+                                       pady=10)
+        self.expand_button.pack(pady=5)
+        self.round_button(self.expand_button)
+
+        # Lista para almacenar rutas de gráficos
+        self.plot_paths = []
+        self.current_html_path = None
+
+
+##############################################
+
+
+    def plot_data(self, plot_paths):
+        """Actualiza la lista de gráficos disponibles"""
+        self.plot_paths = list(plot_paths)
+        graph_names = [path.stem for path in self.plot_paths]
+        self.graph_combobox['values'] = graph_names
+        
+        # Seleccionar primer gráfico si está disponible
+        if graph_names:
+            self.graph_combobox.set(graph_names[0])
+            self.update_graph()
+
+    def update_graph(self, event=None):
+        """Actualiza el gráfico mostrado según la selección"""
+        selected_graph_name = self.graph_combobox.get()
+        
+        # Encontrar la ruta del PNG correspondiente
+        png_path = next((path for path in self.plot_paths if path.stem == selected_graph_name), None)
+        
+        if png_path and png_path.exists():
+            # Cargar y mostrar imagen
+            img = Image.open(png_path)
+            img_resized = img.resize((400, 300), Image.LANCZOS)
+            img_tk = ImageTk.PhotoImage(img_resized)
+            
+            self.graph_image_label.configure(image=img_tk)
+            self.graph_image_label.image = img_tk  # Mantener referencia
+            
+            # Buscar HTML correspondiente
+            html_path = png_path.parent / f"{selected_graph_name}.html"
+            self.current_html_path = str(html_path) if html_path.exists() else None
+
+    def expand_graph(self):
+        """Función para abrir el gráfico HTML interactivo"""
+        if self.current_html_path and Path(self.current_html_path).exists():
+            webview.create_window('Gráfico Interactivo', self.current_html_path)
+            webview.start()
+        else:
+            tk.messagebox.showinfo("Información", "No hay gráfico HTML disponible.")
+
+
+###############################################
 
     def round_button(self, button):
         """Aplica estilo redondeado a los botones"""
@@ -206,118 +264,6 @@ class VideoPlayer(tk.Tk):
             # Llamar a la función proporcionada para procesar el video
             if hasattr(self, 'on_video_selected'):
                 self.on_video_selected(self.video_path)
-
-
-    def plot_data(self, figures_paths):
-        self.figures_paths = [str(path) for path in figures_paths]  # Convertir Path a str
-        # Configurar ambos menús desplegables con las mismas opciones
-        self.graphs_menu1["values"] = self.figures_paths
-        #self.graphs_menu2["values"] = self.figures_paths
-        
-        if self.figures_paths:
-            # Establecer valores iniciales diferentes para cada gráfico
-            self.graphs_menu1.current(0)
-            #self.graphs_menu2.current(min(1, len(self.figures_paths) - 1))
-            self.display_graph(self.figures_paths[0], 1)
-            self.display_graph(self.figures_paths[min(1, len(self.figures_paths) - 1)], 2)
-
-
-    def update_graph(self, event, graph_number):
-        selected_graph = self.graphs_menu1.get() #if graph_number == 1 else self.graphs_menu2.get()
-        if selected_graph:
-            self.display_graph(selected_graph, graph_number)
-
-    def display_graph(self, graph_path, graph_number):
-        ax = self.ax1 #if graph_number == 1 else self.ax2
-        canvas = self.canvas1 #if graph_number == 1 else self.canvas2
-
-        ax.clear()
-        img = plt.imread(graph_path)
-        ax.imshow(img)
-        ax.axis('off')
-        canvas.draw()
-
-    def expand_graph(self, graph_number):
-        """Expand the selected graph to full screen with a more robust approach."""
-        # If already in fullscreen, restore original layout
-        if self.fullscreen_graph:
-            self.restore_layout()
-            return
-
-        # Set fullscreen flag
-        self.fullscreen_graph = True
-
-        # Determine which graph to expand
-        if graph_number == 1:
-            source_fig = self.fig1
-            source_path = self.graphs_menu1.get()
-        # else:
-        #     source_fig = self.fig2
-        #     source_path = self.graphs_menu2.get()
-
-        # Hide the main frame
-        self.main_frame.pack_forget()
-
-        # Create a new fullscreen frame
-        self.fullscreen_frame = tk.Frame(self, bg=self.bg_color)
-        self.fullscreen_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Create a new figure with the same size as the screen
-        fullscreen_fig, fullscreen_ax = plt.subplots(figsize=(16, 9), dpi=100)
-        fullscreen_canvas = FigureCanvasTkAgg(fullscreen_fig, master=self.fullscreen_frame)
-        fullscreen_canvas_widget = fullscreen_canvas.get_tk_widget()
-        fullscreen_canvas_widget.pack(fill=tk.BOTH, expand=True)
-
-        # Load and display the image
-        img = plt.imread(source_path)
-        fullscreen_ax.clear()
-        fullscreen_ax.imshow(img)
-        fullscreen_ax.axis('off')
-        fullscreen_fig.tight_layout(pad=0)
-        fullscreen_canvas.draw()
-
-        # Add a return button
-        return_button = tk.Button(
-            self.fullscreen_frame, 
-            text="Volver", 
-            command=self.restore_layout,
-            bg=self.button_color, 
-            fg=self.text_color, 
-            relief='raised', 
-            borderwidth=0,
-            padx=20, 
-            pady=10
-        )
-        return_button.pack(side=tk.BOTTOM, pady=10)
-
-    def restore_layout(self):
-        """Restore the original layout after fullscreen."""
-        # Destroy the fullscreen frame if it exists
-        if hasattr(self, 'fullscreen_frame'):
-            self.fullscreen_frame.destroy()
-            del self.fullscreen_frame
-
-        # Reset fullscreen flag
-        self.fullscreen_graph = False
-
-        # Restore the main frame
-        self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-        # Redraw original graphs to ensure they're displayed correctly
-        if self.figures_paths:
-            # Redisplay graphs from the original paths
-            first_graph = self.figures_paths[0]
-            second_graph = self.figures_paths[min(1, len(self.figures_paths) - 1)]
-            
-            self.display_graph(first_graph, 1)
-            self.display_graph(second_graph, 2)
-
-    def clear_layout(self):
-        """Oculta temporalmente todos los elementos de la ventana."""
-        for widget in self.main_frame.winfo_children():
-            widget.pack_forget()
-
-    
 
     def show_processed_video(self, video_path):
         self.cap = cv2.VideoCapture(video_path)
@@ -415,7 +361,6 @@ class VideoPlayer(tk.Tk):
             frame = self.current_frame_data.copy()
             frame = self.draw_vectors_on_frame(frame)
             self.display_frame(frame)
-
 
     def update_frame(self):
         """Actualiza el frame actual con o sin vectores"""

@@ -11,7 +11,7 @@ from drawings.colors import Color
 from drawings.draw_configs import JointDrawConfig, DrawType, DrawAxis
 from drawings.draw_helper import DrawHelper
 import matplotlib.pyplot as plt
-from constants.joints_ids_to_names import joints_to_track
+from constants.joints_ids_to_names import Joint, JointTracker
 import webview
 import webbrowser
 from tkinter import messagebox
@@ -49,11 +49,9 @@ class VideoPlayer(tk.Tk):
         self.current_frame_data = None  # Almacena el frame actual  
         self.width = 853
         self.height = 480 
-        self.fullscreen_graph = False
-
-        #joints_to_track.clear()
-
-        #joints_to_track.append()
+        self.fullscreen_graph = False   
+        self.tracker = JointTracker()            
+       
         
         # Definir colores como variables de clas
         self.bg_color = '#1a2639'  # Azul marino
@@ -82,8 +80,13 @@ class VideoPlayer(tk.Tk):
         self.video_frame = tk.Frame(self.main_frame, bg=self.bg_color)
         self.video_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
+        
+         # Frame para cargar video y selección de articulaciones
+        self.load_joint_frame = tk.Frame(self.video_frame, bg=self.bg_color)
+        self.load_joint_frame.pack(pady=5)
+
         # Botón para cargar video
-        self.load_button = tk.Button(self.video_frame, 
+        self.load_button = tk.Button(self.load_joint_frame, 
                                    text="Cargar Video",
                                    command=self.load_video,
                                    bg=self.button_color,
@@ -92,8 +95,36 @@ class VideoPlayer(tk.Tk):
                                    borderwidth=0,
                                    padx=20,
                                    pady=10)
-        self.load_button.pack(pady=10)
-        self.round_button(self.load_button)
+        self.load_button.pack(side=tk.LEFT)
+
+        # Joint selection radio buttons
+        self.joint_selection_var = tk.StringVar(value="right")
+        
+        self.right_joint_radio = tk.Radiobutton(
+            self.load_joint_frame, 
+            text="Articulaciones Derechas", 
+            variable=self.joint_selection_var, 
+            value="right",
+            bg=self.bg_color, 
+            fg=self.text_color,
+            selectcolor=self.button_color,
+            activebackground=self.bg_color,
+            activeforeground=self.text_color
+        )
+        self.right_joint_radio.pack(side=tk.LEFT, padx=5)
+
+        self.left_joint_radio = tk.Radiobutton(
+            self.load_joint_frame, 
+            text="Articulaciones Izquierdas", 
+            variable=self.joint_selection_var, 
+            value="left",
+            bg=self.bg_color, 
+            fg=self.text_color,
+            selectcolor=self.button_color,
+            activebackground=self.bg_color,
+            activeforeground=self.text_color
+        )
+        self.left_joint_radio.pack(side=tk.LEFT, padx=5)
 
          # Checkbox para mostrar vectores
         self.vector_var = tk.BooleanVar()
@@ -225,10 +256,8 @@ class VideoPlayer(tk.Tk):
         self.current_html_path = None
         self.filtered_plot_paths = []
         self.current_joint_filter = None
-
-
+ 
 ##############################################
-
 
     def plot_data(self, plot_paths):
         """Actualiza la lista de gráficos disponibles"""
@@ -377,6 +406,7 @@ class VideoPlayer(tk.Tk):
             webview.start()
         else:
             tk.messagebox.showinfo("Información", "No hay gráfico HTML disponible.")
+
 ###############################################
 
     def round_button(self, button):
@@ -386,9 +416,42 @@ class VideoPlayer(tk.Tk):
         button.bind('<Leave>', 
                    lambda e: button.configure(background=self.button_color))
 
-    def load_video(self):
+    def load_video(self):          
         video_path = filedialog.askopenfilename()
         if video_path:
+            # Determine joints to track based on radio button selection
+            if self.joint_selection_var.get() == "right":          
+                self.tracker.add_joint(Joint.RIGHT_ANKLE)
+                self.tracker.add_joint(Joint.RIGHT_ELBOW)
+                self.tracker.add_joint(Joint.RIGHT_WRIST)
+                self.tracker.add_joint(Joint.RIGHT_INDEX)
+                self.tracker.add_joint(Joint.RIGHT_HIP)
+                self.tracker.add_joint(Joint.RIGHT_THUMB)
+                self.tracker.add_joint(Joint.RIGHT_KNEE)
+                self.tracker.add_joint(Joint.RIGHT_PINKY)
+                self.tracker.add_joint(Joint.RIGHT_HEEL)
+                self.tracker.add_joint(Joint.RIGHT_SHOULDER) 
+                self.tracker.add_joint(Joint.RIGHT_FOOT_INDEX)               
+            else:
+                # Create left-side joints (uncomment left joints in joints_ids_to_names.py)                
+                self.tracker.add_joint(Joint.RIGHT_ELBOW)
+                self.tracker.add_joint(Joint.RIGHT_WRIST)
+                self.tracker.add_joint(Joint.RIGHT_HEEL)
+                self.tracker.add_joint(Joint.RIGHT_SHOULDER)
+
+                self.tracker.add_joint(Joint.LEFT_SHOULDER)    
+                self.tracker.add_joint(Joint.LEFT_ELBOW)
+                self.tracker.add_joint(Joint.LEFT_WRIST)
+                self.tracker.add_joint(Joint.LEFT_PINKY)
+                self.tracker.add_joint(Joint.LEFT_INDEX)
+                self.tracker.add_joint(Joint.LEFT_THUMB)
+                self.tracker.add_joint(Joint.LEFT_HIP)
+                self.tracker.add_joint(Joint.LEFT_KNEE)
+                self.tracker.add_joint(Joint.LEFT_ANKLE)
+                self.tracker.add_joint(Joint.LEFT_FOOT_INDEX)
+                self.tracker.add_joint(Joint.LEFT_HEEL)
+
+
             # Mostrar diálogo de entrada de usuario
             user_input_dialog = UserInputDialog(self, video_path)
             

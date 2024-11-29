@@ -6,6 +6,6 @@
         1080
     ],
     "subject_gender": "M",
-    "subject_mass": 85,
+    "subject_mass": 85.0,
     "pixels_per_meter": 505.313054189676
 }

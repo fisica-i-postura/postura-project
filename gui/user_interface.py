@@ -17,20 +17,26 @@ import webbrowser
 from tkinter import messagebox
 from pathlib import Path
 
+#from globals.video_display import get_draw_configs
 from gui.input_user_panel import UserInputDialog
 
-def get_draw_configs() -> list[JointDrawConfig]:
-    return [
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value,trace=True),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value,trace=False),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value,trace=False),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value,trace=False),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value,trace=False),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value,trace=False),
-    ]
 
-def x(joints: list[int], types: list[DrawType], axes: list[DrawAxis]) -> list[JointDrawConfig]:
-    return [JointDrawConfig(joint_id=joint, draw_type=draw_type, draw_axis=axis, color=Color.RED.value) for joint in joints for draw_type in types for axis in axes]
+def get_draw_configs(self) -> list[JointDrawConfig]:
+        """Genera las configuraciones de dibujo basadas en las articulaciones seleccionadas."""
+        selected_joints = [joint_id for joint_id in self.joint_vars if self.joint_vars[joint_id].get()]
+        
+        draw_configs = []
+        for joint_id in selected_joints:
+            draw_configs.extend([
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value, trace=True),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value, trace=False),
+            ])
+        
+        return draw_configs
 
 class VideoPlayer(tk.Tk):
     def __init__(self):
@@ -140,6 +146,14 @@ class VideoPlayer(tk.Tk):
             activeforeground=self.text_color
         )
         self.vector_checkbox.pack(pady=5)
+
+        # Botón para abrir el panel de selección de articulaciones
+        self.select_joints_button = tk.Button(self.load_joint_frame, text="Seleccionar Articulaciones", command=self.open_joint_selection_panel,
+                                               bg=self.button_color, fg=self.text_color)
+        self.select_joints_button.pack(padx=5)
+
+        # Variables para almacenar el estado de las checkboxes
+        self.joint_vars = {joint_id: tk.BooleanVar() for joint_id in [12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]}
 
         # Canvas para el video
         self.video_canvas = tk.Canvas(self.video_frame, 
@@ -257,7 +271,64 @@ class VideoPlayer(tk.Tk):
         self.filtered_plot_paths = []
         self.current_joint_filter = None
  
+############################################## 
+
+    def open_joint_selection_panel(self):
+        """Abre un panel para seleccionar las articulaciones."""
+        selection_window = tk.Toplevel(self)
+        selection_window.title("Seleccionar Articulaciones")
+        selection_window.geometry("300x400")
+        selection_window.configure(bg=self.bg_color)
+
+        title_label = tk.Label(selection_window, text="Seleccionar Articulaciones", bg=self.bg_color, fg=self.text_color)
+        title_label.pack(pady=10)
+
+        # Crear checkbuttons para cada articulación
+        for joint_id in sorted(self.joint_vars.keys()):
+            cb = tk.Checkbutton(selection_window,
+                                text=f"Articulación {joint_id}",
+                                variable=self.joint_vars[joint_id],
+                                bg=self.bg_color,
+                                fg=self.text_color,
+                                selectcolor=self.button_color,
+                                activebackground=self.bg_color)
+            cb.pack(anchor=tk.W)
+
+        # Botón para aplicar la selección
+        apply_button = tk.Button(selection_window, text="Aplicar", command=lambda: self.apply_joint_selection(selection_window),
+                                 bg=self.button_color, fg=self.text_color)
+        apply_button.pack(pady=10)
+
+
+    def apply_joint_selection(self, window):
+        """Aplica la selección de articulaciones y cierra la ventana."""
+        window.destroy()  # Cierra la ventana después de aplicar
+
+
+    def get_draw_configs(self) -> list[JointDrawConfig]:
+        """Genera las configuraciones de dibujo basadas en las articulaciones seleccionadas."""
+        selected_joints = [joint_id for joint_id in self.joint_vars if self.joint_vars[joint_id].get()]
+        
+        draw_configs = []
+        for joint_id in selected_joints:
+            draw_configs.extend([
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value, trace=True),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value, trace=False),
+            ])
+        
+        return draw_configs
+    
+
 ##############################################
+
+    def update_joint_selection(self, event):
+        selected_joint_id = int(self.joint_combobox.get())
+        # Update draw_helper with new configurations based on selected joint
+        self.draw_helper = DrawHelper(self.video_analysis, get_draw_configs(selected_joint_id))
 
     def plot_data(self, plot_paths):
         """Actualiza la lista de gráficos disponibles"""
@@ -474,9 +545,12 @@ class VideoPlayer(tk.Tk):
         self.update_progress()
 
     def play_video(self):
-        self.draw_helper = DrawHelper(self.video_analysis, get_draw_configs())
+        """Inicia la reproducción del video."""
+        self.draw_helper = DrawHelper(self.video_analysis, self.get_draw_configs())
+        
         if self.cap is None or not self.cap.isOpened():
             return
+        
         self.playing = True
         self.stop_playback = False
         self.update_progress()

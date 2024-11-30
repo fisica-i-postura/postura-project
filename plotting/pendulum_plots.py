@@ -1,14 +1,13 @@
 from pathlib import Path
 
 import numpy as np
+from plotly.graph_objects import Figure
 from plotly.io import write_image, write_html
+from scipy.optimize import curve_fit
 
 from pendulum.solid_bar_pendulum import SolidBarPendulum
 from plotting.plots import plot_helper
-import numpy as np
-from scipy.optimize import curve_fit
-from plotly.io import write_image, write_html
-from plotly.graph_objects import Figure
+
 
 # Definición de la función seno-coseno
 def sin_cos_func(x, amplitude_sin, frequency_sin, phase_sin, amplitude_cos, frequency_cos, phase_cos, offset):
@@ -16,12 +15,12 @@ def sin_cos_func(x, amplitude_sin, frequency_sin, phase_sin, amplitude_cos, freq
             amplitude_cos * np.cos(frequency_cos * x + phase_cos) + offset)
 
 # Ajuste de la curva seno-coseno
-def fit_sin_cos(x, y):
-    amplitude_guess = (np.max(y) - np.min(y)) / 2
-    frequency_guess = 2 * np.pi / (x[-1] - x[0])  # Estimación básica
-    offset_guess = np.mean(y)
+def fit_sin_cos(time, angle, pendulum: SolidBarPendulum):
+    amplitude_guess = (np.max(angle) - np.min(angle)) / 2
+    frequency_guess = np.mean(pendulum.angular_frequency)
+    offset_guess = np.mean(angle)
     initial_guess = [amplitude_guess, frequency_guess, 0, amplitude_guess, frequency_guess, 0, offset_guess]
-    params, covariance = curve_fit(sin_cos_func, x, y, p0=initial_guess, maxfev=10000)
+    params, covariance = curve_fit(sin_cos_func, time, angle, p0=initial_guess, maxfev=10000)
     return params
 
 # Generar los datos ajustados
@@ -71,6 +70,6 @@ class PendulumPlotHelper:
         write_html(fig, f"{self.path}/angle.html")
 
         # Ajuste de la curva y gráfico superpuesto
-        params = fit_sin_cos(time, angle)
+        params = fit_sin_cos(time, angle, self.pendulum)
         y_fit = generate_fit_data(time, params)
         plot_with_fit(time, angle, y_fit, self.path, steps=self.steps)

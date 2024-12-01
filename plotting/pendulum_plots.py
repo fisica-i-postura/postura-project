@@ -10,9 +10,9 @@ from plotting.plots import plot_helper
 
 
 # Definición de la función seno-coseno
-def sin_cos_func(x, amplitude_sin, frequency_sin, phase_sin, amplitude_cos, frequency_cos, phase_cos, offset):
-    return (amplitude_sin * np.sin(frequency_sin * x + phase_sin) +
-            amplitude_cos * np.cos(frequency_cos * x + phase_cos) + offset)
+def sin_cos_func(t, amplitude_sin, frequency_sin, phase_sin, amplitude_cos, frequency_cos, phase_cos, offset):
+    return (amplitude_sin * np.sin(frequency_sin * t + phase_sin) +
+            amplitude_cos * np.cos(frequency_cos * t + phase_cos) + offset)
 
 # Ajuste de la curva seno-coseno
 def fit_sin_cos(time, angle, pendulum: SolidBarPendulum):

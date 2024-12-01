@@ -4,15 +4,16 @@ from globals.video_metadata import VideoMetadata
 from kinematic.joint_kinematics import JointKinematics
 
 class Vector:
-    def __init__(self, xy: tuple[int, int], origin: tuple[int, int] = (0, 0), magnitude: float = -1) -> None:
+    def __init__(self, xy: tuple[int, int], origin: tuple[int, int] = (0, 0), magnitude: float = -1, pixels_per_meters: float = 1) -> None:
         self.xy = xy
         self.origin = origin
+        self.pixels_per_meters = pixels_per_meters
         self.translation = (origin[0] + xy[0], origin[1] + xy[1])
         self.magnitude = magnitude if magnitude >= 0 else self.calculate_magnitude()
 
-    def calculate_magnitude(self):
+    def calculate_magnitude(self) -> float:
         x, y = self.xy
-        return (x**2 + y**2)**0.5
+        return (x**2 + y**2)**0.5 / self.pixels_per_meters
 
 
 class KinematicsVectors:
@@ -27,7 +28,7 @@ class KinematicsVectors:
     def build_position_vectors(self):
         x_pos_in_px = self.kinematics_data.x_position
         y_pos_in_px = self.kinematics_data.y_position
-        o_vector = Vector((0, 0))
+        o_vector = Vector((0, int(self.video_metadata.baseline_offset_in_px)))
         origins = [o_vector] * len(x_pos_in_px)
         return self.build_vectors((x_pos_in_px, y_pos_in_px), origins, self.kinematics_data.position)
 
@@ -39,7 +40,7 @@ class KinematicsVectors:
 
     def build_vectors(self, xys: (np.ndarray[float], np.ndarray[float]), origins: list[Vector], magnitudes: np.ndarray[float]):
         x, y = xys
-        x_in_px = x * self.video_metadata.pixels_per_meter
-        y_in_px = y * self.video_metadata.pixels_per_meter + self.video_metadata.baseline_offset_in_px
-        magnitude_in_px = magnitudes * self.video_metadata.pixels_per_meter
-        return [Vector((x, y), o.translation, m) for x, y, o, m in zip(x_in_px, y_in_px, origins, magnitude_in_px)]
+        pixels_per_meter = self.video_metadata.pixels_per_meter
+        x_in_px = x * pixels_per_meter
+        y_in_px = y * pixels_per_meter
+        return [Vector((x, y), o.translation, m, pixels_per_meter) for x, y, o, m in zip(x_in_px, y_in_px, origins, magnitudes)]

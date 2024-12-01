@@ -11,7 +11,7 @@ def get_angle_np(fixed_points: np.ndarray, moving_points: np.ndarray) -> np.ndar
 
 
 class SolidBarPendulum:
-    def __init__(self, pivot: JointKinematics, center_of_mass: JointKinematics, solid_bar_end: JointKinematics, mass: float):
+    def __init__(self, pivot: JointKinematics, center_of_mass: JointKinematics, solid_bar_end: JointKinematics, mass: float, solid_bar_length: float):
         self.pivot = pivot
         self.center_of_mass = center_of_mass
         self.length = solid_bar_end

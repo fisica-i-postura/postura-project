@@ -17,3 +17,12 @@ class Energy:
         self.total_work = np.nansum(self.work)
         self.non_conservative_forces_work = np.diff(self.mechanical_energy)
         self.total_non_conservative_forces_work = np.nansum(self.non_conservative_forces_work)
+        self.log_work()
+
+    def log_work(self):
+        kinetic_not_nan = [k for k in self.kinetic_energy if not np.isnan(k)]
+        t_diff = kinetic_not_nan[-1] - kinetic_not_nan[0]
+        print(f"Work: sum(deltaT) ?= Tf - Ti => {self.total_work} ?= {t_diff} => {self.total_work == t_diff}")
+        mechanical_not_nan = [m for m in self.mechanical_energy if not np.isnan(m)]
+        t_diff_ncf = mechanical_not_nan[-1] - mechanical_not_nan[0]
+        print( f"Non-conservative forces work: sum(deltaT) ?= EMf - EMi => {self.total_non_conservative_forces_work} ?= {t_diff_ncf} => {self.total_non_conservative_forces_work == t_diff_ncf}")

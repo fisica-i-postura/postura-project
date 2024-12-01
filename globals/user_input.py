@@ -10,6 +10,6 @@ class Gender(Enum):
 @dataclass
 class UserInput:
     video_path: str
-    joints_distance_in_meters: float = 0.33
+    shoulder_elbow_distance_in_meters: float = 0.33
     subject_gender: Gender = Gender.MALE
     subject_weight: float = 85.0

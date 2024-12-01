@@ -25,6 +25,6 @@ class EnergyPlotHelper:
         total_work = np.full_like(x, self.energy_data.total_work)
         total_non_conservative_forces_work = np.full_like(x, self.energy_data.total_non_conservative_forces_work)
         ys = [self.energy_data.work, self.energy_data.non_conservative_forces_work, total_work, total_non_conservative_forces_work]
-        fig = plot_helper(x, ys, names, "Work vs Time", "Time (s)", "Work (J)", "lines")
+        fig = plot_helper(x, ys, names, "Work vs Time", "Time (s)", "Work (J)", "lines", self.steps)
         write_image(fig, f"{self.path}/work_plot.png")
         write_html(fig, f"{self.path}/work_plot.html")

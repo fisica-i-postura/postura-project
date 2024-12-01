@@ -8,3 +8,4 @@ class VideoMetadata:
     subject_gender: str
     subject_mass: float
     pixels_per_meter: float
+    baseline_offset_in_px: float

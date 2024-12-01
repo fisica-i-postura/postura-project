@@ -53,8 +53,8 @@ class DrawHelper:
     def draw_pendulum_angle(self, frame: np.ndarray, frame_idx: int):
         pendulum = self.video_analysis.pendulum
         angle = np.degrees(pendulum.angle[frame_idx])
-        pivot: Point = (pendulum.pivot.x_position_smooth[frame_idx] * self.pixel_per_meter, pendulum.pivot.y_position_smooth[frame_idx] * self.pixel_per_meter)
-        center_of_mass: Point = (pendulum.center_of_mass.x_position_smooth[frame_idx] * self.pixel_per_meter, pendulum.center_of_mass.y_position_smooth[frame_idx] * self.pixel_per_meter)
+        pivot: Point = (pendulum.pivot.x_position_smooth[frame_idx] * self.pixel_per_meter, pendulum.pivot.y_position_smooth[frame_idx] * self.pixel_per_meter + self.video_analysis.video_metadata.baseline_offset_in_px)
+        center_of_mass: Point = (pendulum.center_of_mass.x_position_smooth[frame_idx] * self.pixel_per_meter, pendulum.center_of_mass.y_position_smooth[frame_idx] * self.pixel_per_meter + self.video_analysis.video_metadata.baseline_offset_in_px)
         arm_line = Line(pivot, center_of_mass, f'{angle:.2f} deg')
         vertical_line = Line(pivot, (pivot[0], 0))
         self.cv2_draw_util.draw_shape(frame, [arm_line, vertical_line], (255, 0, 0), [])

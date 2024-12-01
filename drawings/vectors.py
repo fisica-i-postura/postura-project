@@ -40,6 +40,6 @@ class KinematicsVectors:
     def build_vectors(self, xys: (np.ndarray[float], np.ndarray[float]), origins: list[Vector], magnitudes: np.ndarray[float]):
         x, y = xys
         x_in_px = x * self.video_metadata.pixels_per_meter
-        y_in_px = y * self.video_metadata.pixels_per_meter
+        y_in_px = y * self.video_metadata.pixels_per_meter + self.video_metadata.baseline_offset_in_px
         magnitude_in_px = magnitudes * self.video_metadata.pixels_per_meter
         return [Vector((x, y), o.translation, m) for x, y, o, m in zip(x_in_px, y_in_px, origins, magnitude_in_px)]

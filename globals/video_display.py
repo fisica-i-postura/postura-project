@@ -12,15 +12,18 @@ from drawings.colors import Color
 
 def get_draw_configs() -> list[JointDrawConfig]:
     return [
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value, trace=True),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value),
-        JointDrawConfig(joint_id=12, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value),
-        JointDrawConfig(joint_id=Joint.RIGHT_HEEL.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.GREEN.value, trace=True),
-        JointDrawConfig(joint_id=Joint.RIGHT_ELBOW.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.GREEN.value, trace=True),
-        JointDrawConfig(joint_id=Joint.RIGHT_WRIST.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.GREEN.value, trace=True),
+        JointDrawConfig(joint_id=Joint.RIGHT_SHOULDER.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.GREEN.value, trace=True),
+        JointDrawConfig(joint_id=Joint.RIGHT_WRIST.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.YELLOW.value, trace=True),
+        JointDrawConfig(joint_id=Joint.RIGHT_ELBOW.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value, trace=True),
+        JointDrawConfig(joint_id=Joint.RIGHT_ELBOW.value, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=Joint.RIGHT_ELBOW.value, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=Joint.RIGHT_ELBOW.value, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value),
+        JointDrawConfig(joint_id=Joint.RIGHT_HEEL.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.ORANGE.value, trace=True),
+        JointDrawConfig(joint_id=Joint.RIGHT_HEEL.value, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.CYAN.value),
+        JointDrawConfig(joint_id=Joint.RIGHT_HEEL.value, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.CYAN.value),
+        JointDrawConfig(joint_id=Joint.RIGHT_HEEL.value, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.CYAN.value),
+        JointDrawConfig(joint_id=Joint.RIGHT_ELBOW.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.MAGENTA.value, trace=True),
+        JointDrawConfig(joint_id=Joint.RIGHT_WRIST.value, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.TEAL.value, trace=True),
     ]
 
 

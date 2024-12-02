@@ -39,9 +39,14 @@ class VideoPlayer(tk.Tk):
         self.draw_helper = None
         self.show_vectors = False
         self.current_frame_data = None  # Almacena el frame actual  
+<<<<<<< Updated upstream
         self.width = 853
         self.height = 480 
         self.fullscreen_graph = False
+=======
+        self.width = 640
+        self.height = 360 
+>>>>>>> Stashed changes
 
         joints_to_track.clear()
 
@@ -75,8 +80,13 @@ class VideoPlayer(tk.Tk):
         self.video_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Botón para cargar video
+<<<<<<< Updated upstream
         self.load_button = tk.Button(self.video_frame, 
                                    text="Cargar Video",
+=======
+        self.load_button = tk.Button(self.load_joint_frame, 
+                                   text="Upload Video",
+>>>>>>> Stashed changes
                                    command=self.load_video,
                                    bg=self.button_color,
                                    fg=self.text_color,
@@ -84,14 +94,47 @@ class VideoPlayer(tk.Tk):
                                    borderwidth=0,
                                    padx=20,
                                    pady=10)
+<<<<<<< Updated upstream
         self.load_button.pack(pady=10)
         self.round_button(self.load_button)
+=======
+        self.load_button.pack(side=tk.LEFT)
+
+        # Joint selection radio buttons
+        self.joint_selection_var = tk.StringVar(value="right")
+        
+        self.right_joint_radio = tk.Radiobutton(
+            self.load_joint_frame, 
+            text="right joints", 
+            variable=self.joint_selection_var, 
+            value="right",
+            bg=self.bg_color, 
+            fg=self.text_color,
+            selectcolor=self.button_color,
+            activebackground=self.bg_color,
+            activeforeground=self.text_color
+        )
+        self.right_joint_radio.pack(side=tk.LEFT, padx=5)
+
+        self.left_joint_radio = tk.Radiobutton(
+            self.load_joint_frame, 
+            text="left joints", 
+            variable=self.joint_selection_var, 
+            value="left",
+            bg=self.bg_color, 
+            fg=self.text_color,
+            selectcolor=self.button_color,
+            activebackground=self.bg_color,
+            activeforeground=self.text_color
+        )
+        self.left_joint_radio.pack(side=tk.LEFT, padx=5)
+>>>>>>> Stashed changes
 
          # Checkbox para mostrar vectores
         self.vector_var = tk.BooleanVar()
         self.vector_checkbox = tk.Checkbutton(
             self.video_frame,
-            text="Mostrar Vectores",
+            text="Show Vectors",
             variable=self.vector_var,
             command=self.toggle_vectors,
             bg=self.bg_color,
@@ -102,6 +145,31 @@ class VideoPlayer(tk.Tk):
         )
         self.vector_checkbox.pack(pady=5)
 
+<<<<<<< Updated upstream
+=======
+        # Botón para abrir el panel de selección de articulaciones
+        self.select_joints_button = tk.Button(self.load_joint_frame, text="Select Joints", command=self.open_joint_selection_panel,
+                                               bg=self.button_color, fg=self.text_color)
+        self.select_joints_button.pack(padx=5)
+
+        # Variables para almacenar el estado de las checkboxes
+        self.joint_vars = {joint_id: tk.BooleanVar() for joint_id in 
+                           [
+                            12,
+                            14,
+                            16,
+                            18,
+                            20,
+                            22,
+                            24,
+                            26,
+                            28,
+                            30,
+                            32
+                           ]
+                           }
+
+>>>>>>> Stashed changes
         # Canvas para el video
         self.video_canvas = tk.Canvas(self.video_frame, 
                                     width=self.width, 
@@ -155,9 +223,18 @@ class VideoPlayer(tk.Tk):
         self.graph_frame = tk.Frame(self.main_frame, bg=self.bg_color)
         self.graph_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
+<<<<<<< Updated upstream
         # Frame para el primer gráfico
         self.graph1_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
         self.graph1_frame.pack(fill=tk.BOTH, expand=True)
+=======
+        # Etiqueta para selector de gráficos
+        self.graph_label = tk.Label(self.graph_selection_frame, 
+                                    text="Select Graphics:", 
+                                    bg=self.bg_color, 
+                                    fg=self.text_color)
+        self.graph_label.pack(side=tk.LEFT, padx=10, pady=10)
+>>>>>>> Stashed changes
 
         # Menú desplegable para el primer gráfico
         self.graphs_menu1 = ttk.Combobox(self.graph1_frame, 
@@ -168,11 +245,26 @@ class VideoPlayer(tk.Tk):
         self.graphs_menu1.bind("<<ComboboxSelected>>", 
                              lambda e: self.update_graph(e, 1))
 
+<<<<<<< Updated upstream
         #### Canvas para el primer gráfico
         self.fig1, self.ax1 = plt.subplots(figsize=(8, 6))
         self.canvas1 = FigureCanvasTkAgg(self.fig1, master=self.graph1_frame)
         self.canvas1.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
         self.canvas1.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(1))
+=======
+        # Botón de filtrado por articulación
+        self.filter_button = tk.Button(self.graph_selection_frame, 
+                                       text="filter", 
+                                       command=self.show_joint_filter,
+                                       bg=self.button_color, 
+                                       fg=self.text_color,
+                                       relief='raised', 
+                                       borderwidth=0, 
+                                       padx=10, 
+                                       pady=5)
+        self.filter_button.pack(side=tk.LEFT, padx=5)
+        self.round_button(self.filter_button)
+>>>>>>> Stashed changes
 
         # Frame para el segundo gráfico
         self.graph2_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
@@ -187,11 +279,241 @@ class VideoPlayer(tk.Tk):
         self.graphs_menu2.bind("<<ComboboxSelected>>", 
                              lambda e: self.update_graph(e, 2))
 
+<<<<<<< Updated upstream
         #### Canvas para el segundo gráfico
         self.fig2, self.ax2 = plt.subplots(figsize=(8, 6))
         self.canvas2 = FigureCanvasTkAgg(self.fig2, master=self.graph2_frame)
         self.canvas2.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=5)
         self.canvas2.get_tk_widget().bind("<Button-1>", lambda e: self.expand_graph(2))
+=======
+        # Botón para expandir gráfico HTML
+        self.expand_button = tk.Button(self.graph_frame, 
+                                       text="Expand", 
+                                       command=self.expand_graph,
+                                       bg=self.button_color, 
+                                       fg=self.text_color,
+                                       relief='raised', 
+                                       borderwidth=0, 
+                                       padx=20, 
+                                       pady=10)
+        self.expand_button.pack(pady=5)
+        self.round_button(self.expand_button)
+
+        # Lista para almacenar rutas de gráficos
+        self.plot_paths = []
+        self.current_html_path = None
+        self.filtered_plot_paths = []
+        self.current_joint_filter = None
+ 
+############################################## 
+
+    def open_joint_selection_panel(self):
+        """Abre un panel para seleccionar las articulaciones."""
+        selection_window = tk.Toplevel(self)
+        selection_window.title("Seleccionar Articulaciones")
+        selection_window.geometry("300x400")
+        selection_window.configure(bg=self.bg_color)
+
+        title_label = tk.Label(selection_window, text="Seleccionar Articulaciones", bg=self.bg_color, fg=self.text_color)
+        title_label.pack(pady=10)
+
+        # Crear checkbuttons para cada articulación
+        for joint_id in sorted(self.joint_vars.keys()):
+            cb = tk.Checkbutton(selection_window,
+                                text=f"Joint {joint_id}",
+                                variable=self.joint_vars[joint_id],
+                                bg=self.bg_color,
+                                fg=self.text_color,
+                                selectcolor=self.button_color,
+                                activebackground=self.bg_color)
+            cb.pack(anchor=tk.W)
+
+        # Botón para aplicar la selección
+        apply_button = tk.Button(selection_window, text="Aplicar", command=lambda: self.apply_joint_selection(selection_window),
+                                 bg=self.button_color, fg=self.text_color)
+        apply_button.pack(pady=10)
+
+
+    def apply_joint_selection(self, window):
+        """Aplica la selección de articulaciones y cierra la ventana."""
+        window.destroy()  # Cierra la ventana después de aplicar
+
+
+    def get_draw_configs(self) -> list[JointDrawConfig]:
+        """Genera las configuraciones de dibujo basadas en las articulaciones seleccionadas."""
+        selected_joints = [joint_id for joint_id in self.joint_vars if self.joint_vars[joint_id].get()]
+        
+        draw_configs = []
+        for joint_id in selected_joints:
+            draw_configs.extend([
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.R, color=Color.RED.value, trace=True),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.X, color=Color.RED.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.POSITION, draw_axis=DrawAxis.Y, color=Color.RED.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.R, color=Color.BLUE.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.X, color=Color.BLUE.value, trace=False),
+                JointDrawConfig(joint_id=joint_id, draw_type=DrawType.VELOCITY, draw_axis=DrawAxis.Y, color=Color.BLUE.value, trace=False),
+            ])
+        
+        return draw_configs
+    
+
+##############################################
+
+    def update_joint_selection(self, event):
+        selected_joint_id = int(self.joint_combobox.get())
+        # Update draw_helper with new configurations based on selected joint
+        self.draw_helper = DrawHelper(self.video_analysis, get_draw_configs(selected_joint_id))
+
+    def plot_data(self, plot_paths):
+        """Actualiza la lista de gráficos disponibles"""
+        self.plot_paths = list(plot_paths)
+        self.filtered_plot_paths = self.plot_paths
+        self.update_graph_combobox()
+
+    def update_graph_combobox(self):
+        """Actualiza el combobox de gráficos"""
+        graph_names = [path.stem for path in self.filtered_plot_paths]
+        self.graph_combobox['values'] = graph_names
+        
+        # Seleccionar primer gráfico si está disponible
+        if graph_names:
+            self.graph_combobox.set(graph_names[0])
+            self.update_graph()
+
+    def show_joint_filter(self):
+        """Muestra una ventana de filtrado por articulación"""
+        filter_window = tk.Toplevel(self)
+        filter_window.title("Filtrar Articulaciones")
+        filter_window.geometry("300x550")
+        filter_window.configure(bg=self.bg_color)
+
+        # Centrar la ventana
+        self.center_window(filter_window)
+
+        # Título de la ventana de filtrado
+        title_label = tk.Label(filter_window, 
+                            text="Seleccionar Articulaciones", 
+                            bg=self.bg_color, 
+                            fg=self.text_color, 
+                            font=("Arial", 12, "bold"))
+        title_label.pack(pady=10)
+
+        # Frame para contener los checkbuttons
+        checkbox_frame = tk.Frame(filter_window, bg=self.bg_color)
+        checkbox_frame.pack(expand=False, fill=tk.BOTH, padx=20)
+
+        # Variables de control para los checkbuttons
+        joint_vars = {}
+        
+        # Obtener articulaciones únicas de los nombres de archivos
+        unique_joints = set()
+        for path in self.plot_paths:
+            parts = path.stem.split('_')
+            if len(parts) > 0:
+                unique_joints.add(parts[0])
+
+        # Variable para seleccionar/deseleccionar todo
+        select_all_var = tk.BooleanVar(value=True)
+
+        # Checkbox de "Seleccionar Todo"
+        select_all_cb = tk.Checkbutton(checkbox_frame, 
+                                    text="Todo", 
+                                    variable=select_all_var,
+                                    command=lambda: self.toggle_all_joints(joint_vars, select_all_var),
+                                    bg=self.bg_color, 
+                                    fg=self.text_color,
+                                    selectcolor=self.button_color,
+                                    activebackground=self.bg_color)
+        select_all_cb.pack(anchor=tk.W)
+
+        # Crear checkbuttons para cada articulación
+        for joint in sorted(unique_joints):
+            # Usar un valor predeterminado basado en la selección de "Todo"
+            var = tk.BooleanVar(value=select_all_var.get())
+            joint_vars[joint] = var
+            
+            cb = tk.Checkbutton(checkbox_frame, 
+                                text=joint, 
+                                variable=var, 
+                                bg=self.bg_color, 
+                                fg=self.text_color,
+                                selectcolor=self.button_color,
+                                activebackground=self.bg_color,
+                                command=lambda j=joint: self.update_select_all(joint_vars, select_all_var))
+            cb.pack(anchor=tk.W)
+
+        # Botón para aplicar filtro
+        apply_button = tk.Button(filter_window, 
+                                text="Aplicar Filtro", 
+                                command=lambda: self.apply_joint_filter(joint_vars, filter_window),
+                                bg=self.button_color, 
+                                fg=self.text_color)
+        apply_button.pack(pady=10)
+
+    def center_window(self, window):
+        """Centra una ventana en la pantalla"""
+        window.update_idletasks()
+        width = window.winfo_width()
+        height = window.winfo_height()
+        x = (window.winfo_screenwidth() // 2) - (width // 2)
+        y = (window.winfo_screenheight() // 2) - (height // 2)
+        window.geometry(f'{width}x{height}+{x}+{y}')
+
+    def toggle_all_joints(self, joint_vars, select_all_var):
+        """Selecciona o deselecciona todas las articulaciones"""
+        for var in joint_vars.values():
+            var.set(select_all_var.get())
+
+    def update_select_all(self, joint_vars, select_all_var):
+        """Actualiza el estado de 'Seleccionar Todo' basado en las selecciones individuales"""
+        all_selected = all(var.get() for var in joint_vars.values())
+        select_all_var.set(all_selected)
+
+    def apply_joint_filter(self, joint_vars, filter_window):
+        """Aplica el filtro de articulaciones y cierra la ventana"""
+        # Filtrar gráficos basados en las articulaciones seleccionadas
+        self.filtered_plot_paths = [
+            path for path in self.plot_paths 
+            if any(joint in path.stem and joint_vars[joint].get() 
+                for joint in joint_vars.keys())
+        ]
+
+        # Actualizar el combobox
+        self.update_graph_combobox()
+
+        # Cerrar la ventana de filtrado
+        filter_window.destroy()
+
+    def update_graph(self, event=None):
+        """Actualiza el gráfico mostrado según la selección"""
+        selected_graph_name = self.graph_combobox.get()
+        
+        # Encontrar la ruta del PNG correspondiente
+        png_path = next((path for path in self.filtered_plot_paths if path.stem == selected_graph_name), None)
+        
+        if png_path and png_path.exists():
+            # Cargar y mostrar imagen
+            img = Image.open(png_path)
+            img_resized = img.resize((600, 400), Image.LANCZOS)
+            img_tk = ImageTk.PhotoImage(img_resized)
+            
+            self.graph_image_label.configure(image=img_tk)
+            self.graph_image_label.image = img_tk  # Mantener referencia
+            
+            # Buscar HTML correspondiente
+            html_path = png_path.parent / f"{selected_graph_name}.html"
+            self.current_html_path = str(html_path) if html_path.exists() else None
+
+    def expand_graph(self):
+        """Función para abrir el gráfico HTML interactivo"""
+        if self.current_html_path and Path(self.current_html_path).exists():
+            webview.create_window('Gráfico Interactivo', self.current_html_path)
+            webview.start()
+        else:
+            tk.messagebox.showinfo("Información", "No hay gráfico HTML disponible.")
+
+###############################################
+>>>>>>> Stashed changes
 
     def round_button(self, button):
         """Aplica estilo redondeado a los botones"""

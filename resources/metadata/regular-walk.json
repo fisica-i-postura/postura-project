@@ -1,11 +1,22 @@
 {
+<<<<<<< Updated upstream
     "path": "..\\postura-project\\resources\\videos\\regular-walk.mov",
+=======
+    "path": "F:/Descargas/regular-walk.mov",
+>>>>>>> Stashed changes
     "fps": 55.665867853474836,
     "resolution": [
         1920,
         1080
     ],
     "subject_gender": "M",
+<<<<<<< Updated upstream
     "subject_mass": 85,
     "pixels_per_meter": 505.313054189676
+=======
+    "subject_mass": 85.0,
+    "shoulder_wrist_distance_in_meters": 0.63,
+    "pixels_per_meter": 505.313054189676,
+    "baseline_offset_in_px": 120.75953006744385
+>>>>>>> Stashed changes
 }

@@ -1,6 +1,12 @@
 {
+<<<<<<< Updated upstream
     "video_path": "resources/videos/regular-walk.mp4",
     "joints_distance_in_meters": 0.33,
+=======
+    "video_path": "F:/Descargas/regular-walk.mov",
+    "shoulder_elbow_distance_in_meters": 0.33,
+    "shoulder_wrist_distance_in_meters": 0.63,
+>>>>>>> Stashed changes
     "subject_gender": "M",
     "subject_weight": 85
 }

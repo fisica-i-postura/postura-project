@@ -52,8 +52,8 @@ class VideoPlayer(tk.Tk):
         self.draw_helper = None
         self.show_vectors = False
         self.current_frame_data = None  # Almacena el frame actual  
-        self.width = 853
-        self.height = 480 
+        self.width = 640
+        self.height = 360  
 
         self.fullscreen_graph = False   
         self.tracker = JointTracker()            
@@ -92,7 +92,7 @@ class VideoPlayer(tk.Tk):
 
         # Botón para cargar video
         self.load_button = tk.Button(self.load_joint_frame, 
-                                   text="Cargar Video",
+                                   text="Upload Video",
                                    command=self.load_video,
                                    bg=self.button_color,
                                    fg=self.text_color,
@@ -107,7 +107,7 @@ class VideoPlayer(tk.Tk):
         
         self.right_joint_radio = tk.Radiobutton(
             self.load_joint_frame, 
-            text="Articulaciones Derechas", 
+            text="Joints Right", 
             variable=self.joint_selection_var, 
             value="right",
             bg=self.bg_color, 
@@ -120,7 +120,7 @@ class VideoPlayer(tk.Tk):
 
         self.left_joint_radio = tk.Radiobutton(
             self.load_joint_frame, 
-            text="Articulaciones Izquierdas", 
+            text="Joints Left", 
             variable=self.joint_selection_var, 
             value="left",
             bg=self.bg_color, 
@@ -135,7 +135,7 @@ class VideoPlayer(tk.Tk):
         self.vector_var = tk.BooleanVar()
         self.vector_checkbox = tk.Checkbutton(
             self.video_frame,
-            text="Mostrar Vectores",
+            text="Shows Vectors ",
             variable=self.vector_var,
             command=self.toggle_vectors,
             bg=self.bg_color,
@@ -147,7 +147,7 @@ class VideoPlayer(tk.Tk):
         self.vector_checkbox.pack(pady=5)
 
         # Botón para abrir el panel de selección de articulaciones
-        self.select_joints_button = tk.Button(self.load_joint_frame, text="Seleccionar Articulaciones", command=self.open_joint_selection_panel,
+        self.select_joints_button = tk.Button(self.load_joint_frame, text="Select Joints", command=self.open_joint_selection_panel,
                                                bg=self.button_color, fg=self.text_color)
         self.select_joints_button.pack(padx=5)
 
@@ -218,7 +218,7 @@ class VideoPlayer(tk.Tk):
 
         # Etiqueta para selector de gráficos
         self.graph_label = tk.Label(self.graph_selection_frame, 
-                                    text="Seleccionar Gráfico:", 
+                                    text="Select Graph:", 
                                     bg=self.bg_color, 
                                     fg=self.text_color)
         self.graph_label.pack(side=tk.LEFT, padx=10)
@@ -294,7 +294,7 @@ class VideoPlayer(tk.Tk):
             cb.pack(anchor=tk.W)
 
         # Botón para aplicar la selección
-        apply_button = tk.Button(selection_window, text="Aplicar", command=lambda: self.apply_joint_selection(selection_window),
+        apply_button = tk.Button(selection_window, text="Apply", command=lambda: self.apply_joint_selection(selection_window),
                                  bg=self.button_color, fg=self.text_color)
         apply_button.pack(pady=10)
 
@@ -348,8 +348,8 @@ class VideoPlayer(tk.Tk):
     def show_joint_filter(self):
         """Muestra una ventana de filtrado por articulación"""
         filter_window = tk.Toplevel(self)
-        filter_window.title("Filtrar Articulaciones")
-        filter_window.geometry("300x450")
+        filter_window.title("Filter Joints")
+        filter_window.geometry("300x550")
         filter_window.configure(bg=self.bg_color)
 
         # Centrar la ventana
@@ -357,7 +357,7 @@ class VideoPlayer(tk.Tk):
 
         # Título de la ventana de filtrado
         title_label = tk.Label(filter_window, 
-                            text="Seleccionar Articulaciones", 
+                            text="Select Joints to Filter", 
                             bg=self.bg_color, 
                             fg=self.text_color, 
                             font=("Arial", 12, "bold"))
@@ -459,7 +459,7 @@ class VideoPlayer(tk.Tk):
         if png_path and png_path.exists():
             # Cargar y mostrar imagen
             img = Image.open(png_path)
-            img_resized = img.resize((800, 600), Image.LANCZOS)
+            img_resized = img.resize((650, 450), Image.LANCZOS)
             img_tk = ImageTk.PhotoImage(img_resized)
             
             self.graph_image_label.configure(image=img_tk)

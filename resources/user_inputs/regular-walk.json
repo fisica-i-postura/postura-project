@@ -1,6 +1,7 @@
 {
+    "shoulder_elbow_distance_in_meters": 0.35,
+    "shoulder_wrist_distance_in_meters": 0.63,
     "video_path": "C:/Users/Valen/Downloads/regular-walk.mov",
-    "joints_distance_in_meters": 0.33,
     "subject_gender": "M",
     "subject_weight": 85.0
 }

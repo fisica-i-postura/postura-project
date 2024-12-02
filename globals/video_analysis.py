@@ -45,6 +45,7 @@ class VideoAnalysis:
             self.joints_analysis[Joint.RIGHT_ELBOW.value].kinematics_data,
             self.joints_analysis[Joint.RIGHT_WRIST.value].kinematics_data,
             self.calculate_full_arm_mass(),
+            self.video_metadata.shoulder_wrist_distance_in_meters
         )
 
     def calculate_full_arm_mass(self):

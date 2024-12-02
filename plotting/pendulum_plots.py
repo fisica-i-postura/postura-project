@@ -58,18 +58,16 @@ class PendulumPlotHelper:
 
     def plot(self):
         names = ["angle"]
-        angle = np.degrees(np.arctan(np.tan(self.pendulum.angle)))
+        angle = np.degrees(self.pendulum.angle)
+        ys = [angle]
         time = self.pendulum.pivot.t
-        
-        # Gráfico original
-        fig = plot_helper(
-            time, [angle], names, "Shoulder-Wrist angle vs Time", 
-            "Time (s)", "Angle (degrees)", steps=self.steps
-        )
+        fig = plot_helper(time, ys, names, "Shoulder-Elbow angle vs Time", "Time (s)", "Angle (degrees)", steps=self.steps)
         write_image(fig, f"{self.path}/angle.png", width=1280, height=720, scale=4, engine="kaleido", format="png")
         write_html(fig, f"{self.path}/angle.html")
 
-        # Ajuste de la curva y gráfico superpuesto
-        params = fit_sin_cos(time, angle, self.pendulum)
-        y_fit = generate_fit_data(time, params)
-        plot_with_fit(time, angle, y_fit, self.path, steps=self.steps)
+        names = ["angular velocity"]
+        ys = [self.pendulum.angular_velocity]
+        fig = plot_helper(time, ys, names, "Shoulder-Elbow angular velocity vs Time", "Time (s)", "Angular velocity (rad/s)", steps=self.steps)
+        write_image(fig, f"{self.path}/angular_velocity.png", width=1280, height=720, scale=4, engine="kaleido", format="png")
+        write_html(fig, f"{self.path}/angular_velocity.html")
+

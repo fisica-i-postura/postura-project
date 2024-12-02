@@ -11,15 +11,14 @@ from drawings.colors import Color
 from drawings.draw_configs import JointDrawConfig, DrawType, DrawAxis
 from drawings.draw_helper import DrawHelper
 import matplotlib.pyplot as plt
+
 from constants.joints_ids_to_names import Joint, JointTracker
 import webview
 import webbrowser
 from tkinter import messagebox
 from pathlib import Path
 
-#from globals.video_display import get_draw_configs
 from gui.input_user_panel import UserInputDialog
-
 
 def get_draw_configs(self) -> list[JointDrawConfig]:
         """Genera las configuraciones de dibujo basadas en las articulaciones seleccionadas."""
@@ -55,9 +54,9 @@ class VideoPlayer(tk.Tk):
         self.current_frame_data = None  # Almacena el frame actual  
         self.width = 853
         self.height = 480 
+
         self.fullscreen_graph = False   
         self.tracker = JointTracker()            
-       
         
         # Definir colores como variables de clas
         self.bg_color = '#1a2639'  # Azul marino
@@ -212,7 +211,7 @@ class VideoPlayer(tk.Tk):
          # Frame para gráficos (derecha)
         self.graph_frame = tk.Frame(self.main_frame, bg=self.bg_color)
         self.graph_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-
+      
         # Frame para selección de gráficos
         self.graph_selection_frame = tk.Frame(self.graph_frame, bg=self.bg_color)
         self.graph_selection_frame.pack(fill=tk.X, pady=10)
@@ -487,6 +486,7 @@ class VideoPlayer(tk.Tk):
         button.bind('<Leave>', 
                    lambda e: button.configure(background=self.button_color))
 
+        
     def load_video(self):          
         video_path = filedialog.askopenfilename()
         if video_path:
@@ -646,4 +646,3 @@ class VideoPlayer(tk.Tk):
         frame = self.draw_vectors_on_frame(frame)
         self.display_frame(frame)
         return True        
-

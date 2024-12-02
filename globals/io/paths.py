@@ -7,6 +7,7 @@ VIDEOS = f'{RESOURCES}/videos'
 CSV = f'{RESOURCES}/csv'
 PLOTS = f'{RESOURCES}/plots'
 METADATA = f'{RESOURCES}/metadata'
+PROCESSED = f'{RESOURCES}/processed'
 
 
 def get_folder(name, create):
@@ -31,6 +32,9 @@ def get_csv_folder_path(create: bool = True) -> Path:
 def get_metadata_folder_path(create: bool = True) -> Path:
     return get_folder(METADATA, create)
 
+def get_processed_folder_path(create: bool = True) -> Path:
+    return get_folder(PROCESSED, create)
+
 
 class PathHelper:
     def __init__(self, path: Path):
@@ -52,3 +56,12 @@ class PathHelper:
 
     def get_metadata_path(self) -> Path:
         return Path(f'{get_metadata_folder_path()}/{self.stem}.json')
+
+    def get_processed_video_folder(self) -> Path:
+        folder = Path(f'{get_processed_folder_path()}/{self.stem}_processed')
+        if not folder.exists():
+            folder.mkdir(parents=True, exist_ok=True)
+        return folder
+
+    def get_processed_video_path(self) -> Path:
+        return Path(f'{self.get_processed_video_folder()}/{self.stem}_processed.mp4')

@@ -15,6 +15,7 @@ class Gender(Enum):
 class UserInput:
     video_path: str
     joints_distance_in_meters: float = 0.33
+    shoulder_wrist_distance_in_meters: float = 0.63  # Nuevo parámetro
     subject_gender: Gender = Gender.MALE
     subject_weight: float = 85.0
 
@@ -24,7 +25,7 @@ class UserInputDialog(tk.Toplevel):
         self.title("Información del Sujeto")
         self.video_path = video_path
         self.result = None
-        self.geometry("400x500")
+        self.geometry("400x600")  # Ajustar la altura para incluir el nuevo campo
         self.configure(bg=parent.bg_color)
         self.resizable(False, False)
 
@@ -59,6 +60,23 @@ class UserInputDialog(tk.Toplevel):
                                        insertbackground=parent.text_color)
         self.distance_entry.pack(side=tk.RIGHT, expand=True, fill=tk.X)
         self.distance_entry.insert(0, "0.33")
+
+        # Distancia hombro-muñeca (nuevo campo)
+        wrist_distance_frame = tk.Frame(main_frame, bg=parent.bg_color)
+        wrist_distance_frame.pack(fill=tk.X, pady=10)
+
+        wrist_distance_label = tk.Label(wrist_distance_frame,
+                                        text="Distancia hombro-muñeca (m):",
+                                        bg=parent.bg_color,
+                                        fg=parent.text_color)
+        wrist_distance_label.pack(side=tk.LEFT)
+
+        self.wrist_distance_entry = tk.Entry(wrist_distance_frame,
+                                             bg=parent.button_color,
+                                             fg=parent.text_color,
+                                             insertbackground=parent.text_color)
+        self.wrist_distance_entry.pack(side=tk.RIGHT, expand=True, fill=tk.X)
+        self.wrist_distance_entry.insert(0, "0.63")  # Valor por defecto
 
         # Género
         gender_frame = tk.Frame(main_frame, bg=parent.bg_color)
@@ -107,10 +125,10 @@ class UserInputDialog(tk.Toplevel):
         self.weight_entry.insert(0, "85")
 
         # Botón Confirmar
-        confirm_button = tk.Button(main_frame, 
-                                   text="Confirmar", 
+        confirm_button = tk.Button(main_frame,
+                                   text="Confirmar",
                                    command=self.on_confirm,
-                                   bg=parent.button_color, 
+                                   bg=parent.button_color,
                                    fg=parent.text_color)
         confirm_button.pack(pady=20)
 
@@ -131,10 +149,15 @@ class UserInputDialog(tk.Toplevel):
     def on_confirm(self):
         """Validar y guardar los datos ingresados"""
         try:
-            # Validar distancia
+            # Validar distancia entre articulaciones
             distance = float(self.distance_entry.get())
             if distance <= 0:
-                raise ValueError("La distancia debe ser mayor que 0")
+                raise ValueError("La distancia entre articulaciones debe ser mayor que 0")
+
+            # Validar distancia hombro-muñeca
+            wrist_distance = float(self.wrist_distance_entry.get())
+            if wrist_distance <= 0:
+                raise ValueError("La distancia hombro-muñeca debe ser mayor que 0")
 
             # Validar peso
             weight = float(self.weight_entry.get())
@@ -144,7 +167,8 @@ class UserInputDialog(tk.Toplevel):
             # Crear diccionario de entrada de usuario
             user_input_dict = {
                 "video_path": self.video_path,
-                "joints_distance_in_meters": distance,
+                "shoulder_elbow_distance_in_meters": distance,  # Asegúrate de usar el nombre correcto aquí
+                "shoulder_wrist_distance_in_meters": wrist_distance,
                 "subject_gender": self.gender_var.get(),
                 "subject_weight": weight
             }

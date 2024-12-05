@@ -56,10 +56,12 @@ class Cv2DrawUtils:
                 cv2.putText(frame, f'{vector.magnitude:.2f} m', (px + TEXT_PADDING_PX, py + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, point, color, 2)
             case DrawAxis.X:
-                cv2.putText(frame, f'{px - x0:.2f} m', (px + TEXT_PADDING_PX, y0 + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+                magnitude = abs((px - x0) / vector.pixels_per_meters)
+                cv2.putText(frame, f'{magnitude :.2f} m', (px + TEXT_PADDING_PX, y0 + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, (px, y0), color, 2)
             case DrawAxis.Y:
-                cv2.putText(frame, f'{py - y0:.2f} m', (x0 + TEXT_PADDING_PX, py + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+                magnitude = abs((py - y0) / vector.pixels_per_meters)
+                cv2.putText(frame, f'{magnitude :.2f} m', (x0 + TEXT_PADDING_PX, py + TEXT_PADDING_PX), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                 cv2.arrowedLine(frame, p0, (x0, py), color, 2)
 
     def draw_line(self, frame: np.ndarray, line: Line, color: Color, thickness = 2) -> None:

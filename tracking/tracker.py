@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import cv2
 import mediapipe as mp
 import pandas as pd
-from constants.joints_ids_to_names import joints_to_track
+from constants.joints_ids_to_names import joints_to_track, Joint
 from constants.df_columns_names import FRAME_INDEX, JOINT_ID, X_POSITION_NORMALIZED, Y_POSITION_NORMALIZED, VISIBILITY, \
     X_POSITION_ABSOLUTE, Y_POSITION_ABSOLUTE, SECOND, X_POSITION_IN_PX, Y_POSITION_IN_PX
 
@@ -22,6 +22,7 @@ class VideoOutput:
     resolution: tuple[int, int]
     fps: float
     pixels_per_meter: float
+    base_line_offset_in_px: float = 0
 
 
 class VideoTracker:
@@ -35,11 +36,12 @@ class VideoTracker:
         self.resolution: tuple[int, int] | None = None
         self.fps: float | None = None
         self.pixels_per_meter: float | None = None
+        self.baseline_offset_in_px: float | None = None
 
     def process(self) -> VideoOutput:
         self._process_video()
         self._adjust_data()
-        return VideoOutput(self.df, self.resolution, self.fps, self.pixels_per_meter)
+        return VideoOutput(self.df, self.resolution, self.fps, self.pixels_per_meter, self.baseline_offset_in_px)
 
     def _process_video(self):
         cap = cv2.VideoCapture(self.video_input.path)
@@ -81,12 +83,17 @@ class VideoTracker:
 
     def _adjust_data(self):
         self._denormalize_positions()
+        self._adjust_height_to_heel_base()
         self._calculate_positions_in_meters()
         self._calculate_second_per_frame()
 
     def _denormalize_positions(self):
         self.df[X_POSITION_IN_PX] = self.df[X_POSITION_NORMALIZED] * self.resolution[0]
         self.df[Y_POSITION_IN_PX] = self.df[Y_POSITION_NORMALIZED] * self.resolution[1]
+
+    def _adjust_height_to_heel_base(self):
+        self.baseline_offset_in_px = min(self.df[self.df[JOINT_ID] == Joint.RIGHT_HEEL.value][Y_POSITION_IN_PX])
+        self.df[Y_POSITION_IN_PX] = self.df[Y_POSITION_IN_PX] - self.baseline_offset_in_px
 
     def _calculate_positions_in_meters(self):
         conversion_factor = self.calculate_conversion_factor()
